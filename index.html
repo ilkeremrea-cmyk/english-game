@@ -544,7 +544,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
         let appId = 'word-adventure-default';
         try {
@@ -587,16 +587,16 @@
                 iconClass: 'fa-solid fa-school',
                 desc: 'School supplies and classroom items',
                 questions: [
-                    { text: "What is this school object?", imageUrl: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80", options: ["Notebook", "Book", "Eraser", "Pen"], correct: 1 },
-                    { text: "What is this item?", imageUrl: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=600&q=80", options: ["Pencil", "Ruler", "Bag", "Scissors"], correct: 1 },
-                    { text: "What do we call this school item?", imageUrl: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80", options: ["School Bag", "Desk", "Map", "Book"], correct: 0 },
-                    { text: "What is the name of this object?", imageUrl: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&w=600&q=80", options: ["Pencil", "Eraser", "Ruler", "Notebook"], correct: 2 },
-                    { text: "Which classroom tool is shown?", imageUrl: "https://images.unsplash.com/photo-1585336261026-6757688719d3?auto=format&fit=crop&w=600&q=80", options: ["Paper", "Book", "Scissors", "Pen"], correct: 2 },
-                    { text: "What is this item in the classroom?", imageUrl: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=600&q=80", options: ["Clock", "Computer", "Board", "Desk"], correct: 1 },
-                    { text: "Which furniture is shown?", imageUrl: "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=600&q=80", options: ["Table", "Desk", "Chair", "Board"], correct: 2 },
-                    { text: "Who is this person in the classroom?", imageUrl: "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80", options: ["Student", "Doctor", "Teacher", "Driver"], correct: 2 },
-                    { text: "What is this classroom item?", imageUrl: "https://images.unsplash.com/photo-1616440347437-b1c73416efc2?auto=format&fit=crop&w=600&q=80", options: ["Wastebasket", "Desk", "Map", "Pencil Case"], correct: 2 },
-                    { text: "Which study item is shown?", imageUrl: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=600&q=80", options: ["Folder", "Notebook", "Glue", "Book"], correct: 1 }
+                    { text: "What is this?", emoji: "✏️", options: ["Ruler", "Pencil", "Book", "Bag"], correct: 1 },
+                    { text: "What is this?", emoji: "📏", options: ["Ruler", "Pen", "Scissors", "Eraser"], correct: 0 },
+                    { text: "What is this?", emoji: "🎒", options: ["Desk", "Clock", "School bag", "Computer"], correct: 2 },
+                    { text: "What is this?", emoji: "✂️", options: ["Glue", "Scissors", "Paper", "Pencil"], correct: 1 },
+                    { text: "What are these?", emoji: "📚", options: ["Chairs", "Bags", "Clocks", "Books"], correct: 3 },
+                    { text: "What is this?", emoji: "💻", options: ["Computer", "Television", "Telephone", "Radio"], correct: 0 },
+                    { text: "What is this?", emoji: "🪑", options: ["Table", "Door", "Chair", "Window"], correct: 2 },
+                    { text: "Who is this?", emoji: "👩‍🏫", options: ["Student", "Teacher", "Doctor", "Driver"], correct: 1 },
+                    { text: "What is this?", emoji: "🕒", options: ["Map", "Globe", "Board", "Clock"], correct: 3 },
+                    { text: "What is this?", emoji: "🌍", options: ["Globe", "Ball", "Clock", "Bag"], correct: 0 }
                 ]
             },
             {
@@ -605,16 +605,16 @@
                 iconClass: 'fa-solid fa-paw',
                 desc: 'Cute animal vocabulary',
                 questions: [
-                    { text: "Which cute animal is this?", imageUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80", options: ["Cat", "Bird", "Dog", "Rabbit"], correct: 2 },
-                    { text: "What is the name of this animal?", imageUrl: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80", options: ["Dog", "Fish", "Cat", "Lion"], correct: 2 },
-                    { text: "Which flying creature is this?", imageUrl: "https://images.unsplash.com/photo-1452570053594-1b985d6ea890?auto=format&fit=crop&w=600&q=80", options: ["Duck", "Bird", "Frog", "Bear"], correct: 1 },
-                    { text: "Which water animal is shown?", imageUrl: "https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?auto=format&fit=crop&w=600&q=80", options: ["Turtle", "Whale", "Fish", "Dolphin"], correct: 2 },
-                    { text: "Which wild animal is this?", imageUrl: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?auto=format&fit=crop&w=600&q=80", options: ["Lion", "Elephant", "Tiger", "Bear"], correct: 0 },
-                    { text: "Which green animal is this?", imageUrl: "https://images.unsplash.com/photo-1550948537-130a1ce83314?auto=format&fit=crop&w=600&q=80", options: ["Snake", "Lizard", "Frog", "Cat"], correct: 2 },
-                    { text: "Which cute animal is shown?", imageUrl: "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?auto=format&fit=crop&w=600&q=80", options: ["Dog", "Bear", "Cat", "Monkey"], correct: 1 },
-                    { text: "Which fast animal is this?", imageUrl: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&w=600&q=80", options: ["Cow", "Sheep", "Horse", "Goat"], correct: 2 },
-                    { text: "Which tiny insect is shown?", imageUrl: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?auto=format&fit=crop&w=600&q=80", options: ["Ant", "Bee", "Fly", "Spider"], correct: 1 },
-                    { text: "Which cute animal is this?", imageUrl: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?auto=format&fit=crop&w=600&q=80", options: ["Rabbit", "Dog", "Cat", "Dinosaur"], correct: 0 }
+                    { text: "What is this animal?", emoji: "🐶", options: ["Cat", "Dog", "Bird", "Fish"], correct: 1 },
+                    { text: "What is this animal?", emoji: "🐱", options: ["Cat", "Dog", "Horse", "Rabbit"], correct: 0 },
+                    { text: "What is this animal?", emoji: "🐦", options: ["Frog", "Bee", "Bird", "Cow"], correct: 2 },
+                    { text: "What is this animal?", emoji: "🐟", options: ["Bird", "Fish", "Lion", "Bear"], correct: 1 },
+                    { text: "What is this animal?", emoji: "🦁", options: ["Elephant", "Monkey", "Horse", "Lion"], correct: 3 },
+                    { text: "What is this animal?", emoji: "🐸", options: ["Frog", "Duck", "Cat", "Mouse"], correct: 0 },
+                    { text: "What is this animal?", emoji: "🐻", options: ["Dog", "Cow", "Bear", "Sheep"], correct: 2 },
+                    { text: "What is this animal?", emoji: "🐴", options: ["Horse", "Rabbit", "Cat", "Bird"], correct: 0 },
+                    { text: "What is this insect?", emoji: "🐝", options: ["Ant", "Butterfly", "Bee", "Spider"], correct: 2 },
+                    { text: "What is this animal?", emoji: "🐰", options: ["Mouse", "Rabbit", "Dog", "Fish"], correct: 1 }
                 ]
             },
             {
@@ -623,16 +623,16 @@
                 iconClass: 'fa-solid fa-apple-whole',
                 desc: 'Delicious food and drinks',
                 questions: [
-                    { text: "What fruit is shown in the picture?", imageUrl: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=80", options: ["Orange", "Banana", "Apple", "Grape"], correct: 2 },
-                    { text: "Which delicious food is this?", imageUrl: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80", options: ["Burger", "Pizza", "Pasta", "Bread"], correct: 1 },
-                    { text: "Which healthy drink is shown?", imageUrl: "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?auto=format&fit=crop&w=600&q=80", options: ["Milk", "Water", "Tea", "Juice"], correct: 1 },
-                    { text: "Which breakfast food is this?", imageUrl: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80", options: ["Cheese", "Bread", "Egg", "Butter"], correct: 1 },
-                    { text: "Which sweet cold food is shown?", imageUrl: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=600&q=80", options: ["Cake", "Candy", "Ice Cream", "Chocolate"], correct: 2 },
-                    { text: "What drink is shown here?", imageUrl: "https://images.unsplash.com/photo-1550583724-b2692b85b150?auto=format&fit=crop&w=600&q=80", options: ["Water", "Lemonade", "Milk", "Coffee"], correct: 2 },
-                    { text: "Which yellow fruit is this?", imageUrl: "https://images.unsplash.com/photo-1534531141161-e4160499e97c?auto=format&fit=crop&w=600&q=80", options: ["Melon", "Peach", "Lemon", "Apple"], correct: 2 },
-                    { text: "Which fast food meal is shown?", imageUrl: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80", options: ["Sandwich", "Hamburger", "Hotdog", "Pizza"], correct: 1 },
-                    { text: "Which breakfast item is this?", imageUrl: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=600&q=80", options: ["Cheese", "Egg", "Olive", "Honey"], correct: 1 },
-                    { text: "Which hot drink is shown?", imageUrl: "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80", options: ["Tea", "Soup", "Coffee", "Milk"], correct: 2 }
+                    { text: "What is this fruit?", emoji: "🍎", options: ["Banana", "Grape", "Orange", "Apple"], correct: 3 },
+                    { text: "What is this fruit?", emoji: "🍌", options: ["Banana", "Lemon", "Apple", "Cherry"], correct: 0 },
+                    { text: "What is this food?", emoji: "🍕", options: ["Bread", "Pizza", "Cheese", "Cake"], correct: 1 },
+                    { text: "What is this drink?", emoji: "🥛", options: ["Water", "Tea", "Milk", "Juice"], correct: 2 },
+                    { text: "What is this food?", emoji: "🍞", options: ["Egg", "Cake", "Rice", "Bread"], correct: 3 },
+                    { text: "What is this?", emoji: "🍦", options: ["Ice cream", "Cake", "Soup", "Pasta"], correct: 0 },
+                    { text: "What is this fruit?", emoji: "🍋", options: ["Apple", "Lemon", "Banana", "Pear"], correct: 1 },
+                    { text: "What is this food?", emoji: "🍔", options: ["Pizza", "Salad", "Hamburger", "Sandwich"], correct: 2 },
+                    { text: "What is this food?", emoji: "🥚", options: ["Egg", "Cheese", "Bread", "Apple"], correct: 0 },
+                    { text: "What are these?", emoji: "🍇", options: ["Cherries", "Strawberries", "Lemons", "Grapes"], correct: 3 }
                 ]
             },
             {
@@ -641,16 +641,16 @@
                 iconClass: 'fa-solid fa-house-user',
                 desc: 'Rooms, house items, and family members',
                 questions: [
-                    { text: "What is this building?", imageUrl: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=600&q=80", options: ["School", "House", "Park", "Hospital"], correct: 1 },
-                    { text: "Which bedroom item is shown?", imageUrl: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=600&q=80", options: ["Sofa", "Table", "Bed", "Closet"], correct: 2 },
-                    { text: "Which living room furniture is this?", imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=600&q=80", options: ["Chair", "Bed", "Armchair / Sofa", "Desk"], correct: 2 },
-                    { text: "Which electronic device is shown?", imageUrl: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=600&q=80", options: ["Television", "Radio", "Computer", "Phone"], correct: 0 },
-                    { text: "Which part of a house is this?", imageUrl: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80", options: ["Window", "Door", "Wall", "Roof"], correct: 1 },
-                    { text: "Which word represents people living together?", imageUrl: "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=600&q=80", options: ["Friend", "Family", "Teacher", "Student"], correct: 1 },
-                    { text: "What item is shown on the wall?", imageUrl: "https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?auto=format&fit=crop&w=600&q=80", options: ["Watch", "Mirror", "Clock", "Lamp"], correct: 2 },
-                    { text: "Which bathroom item is shown?", imageUrl: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80", options: ["Shower", "Bath", "Sink", "Towel"], correct: 1 },
-                    { text: "Which lighting tool is this?", imageUrl: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=600&q=80", options: ["Light", "Sun", "Lamp", "Star"], correct: 2 },
-                    { text: "What part of the house is shown?", imageUrl: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80", options: ["Garden", "Garage", "Kitchen", "Balcony"], correct: 2 }
+                    { text: "What is this?", emoji: "🏠", options: ["School", "House", "Park", "Shop"], correct: 1 },
+                    { text: "What is this?", emoji: "🛏️", options: ["Bed", "Sofa", "Table", "Chair"], correct: 0 },
+                    { text: "What is this?", emoji: "🛋️", options: ["Bed", "Desk", "Sofa", "Lamp"], correct: 2 },
+                    { text: "What is this?", emoji: "📺", options: ["Computer", "Television", "Clock", "Telephone"], correct: 1 },
+                    { text: "What is this?", emoji: "🚪", options: ["Window", "Wall", "Door", "Floor"], correct: 2 },
+                    { text: "What is this?", emoji: "🪟", options: ["Window", "Door", "Table", "Bed"], correct: 0 },
+                    { text: "What is this?", emoji: "🚿", options: ["Bed", "Sink", "Shower", "Mirror"], correct: 2 },
+                    { text: "What is this?", emoji: "💡", options: ["Lamp", "Clock", "Phone", "Book"], correct: 0 },
+                    { text: "What is this?", emoji: "🛁", options: ["Bath", "Bed", "Chair", "Door"], correct: 0 },
+                    { text: "Who are they?", emoji: "👨‍👩‍👧‍👦", options: ["Teachers", "Students", "Friends", "Family"], correct: 3 }
                 ]
             },
             {
@@ -659,16 +659,16 @@
                 iconClass: 'fa-solid fa-gamepad',
                 desc: 'Sports, games, and fun hobbies',
                 questions: [
-                    { text: "Which sport branch is shown?", imageUrl: "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=600&q=80", options: ["Basketball", "Football", "Tennis", "Volleyball"], correct: 1 },
-                    { text: "Which artistic hobby is shown?", imageUrl: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80", options: ["Music", "Painting", "Dancing", "Reading"], correct: 1 },
-                    { text: "Which musical instrument is shown?", imageUrl: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=600&q=80", options: ["Piano", "Drums", "Guitar", "Violin"], correct: 2 },
-                    { text: "Which outdoor activity is shown?", imageUrl: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=600&q=80", options: ["Running", "Riding a Bike", "Swimming", "Skating"], correct: 1 },
-                    { text: "Which water sport is shown?", imageUrl: "https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=600&q=80", options: ["Diving", "Sailing", "Swimming", "Surfing"], correct: 2 },
-                    { text: "Which relaxing hobby is shown?", imageUrl: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=600&q=80", options: ["Writing", "Drawing", "Reading Books", "Listening"], correct: 2 },
-                    { text: "Which gaming device is shown?", imageUrl: "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?auto=format&fit=crop&w=600&q=80", options: ["Board Game", "Video Games", "Chess", "Cards"], correct: 1 },
-                    { text: "Which intelligence game is shown?", imageUrl: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?auto=format&fit=crop&w=600&q=80", options: ["Checkers", "Puzzle", "Chess", "Lego"], correct: 2 },
-                    { text: "Which music hobby is shown?", imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80", options: ["Singing", "Listening to Music", "Dancing", "Playing"], correct: 1 },
-                    { text: "Which outdoor activity is shown?", imageUrl: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80", options: ["Hiking", "Picnic", "Camping", "Running"], correct: 2 }
+                    { text: "What sport is this?", emoji: "⚽", options: ["Basketball", "Football", "Tennis", "Swimming"], correct: 1 },
+                    { text: "What sport is this?", emoji: "🏀", options: ["Football", "Volleyball", "Basketball", "Tennis"], correct: 2 },
+                    { text: "What instrument is this?", emoji: "🎸", options: ["Piano", "Drum", "Violin", "Guitar"], correct: 3 },
+                    { text: "What instrument is this?", emoji: "🎹", options: ["Piano", "Guitar", "Drum", "Flute"], correct: 0 },
+                    { text: "What is this hobby?", emoji: "🚴", options: ["Swimming", "Riding a bike", "Running", "Skating"], correct: 1 },
+                    { text: "What is this sport?", emoji: "🏊", options: ["Swimming", "Running", "Dancing", "Cycling"], correct: 0 },
+                    { text: "What is this hobby?", emoji: "🎨", options: ["Singing", "Reading", "Painting", "Cooking"], correct: 2 },
+                    { text: "What is this hobby?", emoji: "🎮", options: ["Playing video games", "Reading", "Cooking", "Painting"], correct: 0 },
+                    { text: "What is this game?", emoji: "♟️", options: ["Chess", "Football", "Cards", "Puzzle"], correct: 0 },
+                    { text: "What is this?", emoji: "🏕️", options: ["Swimming", "Camping", "Running", "Cooking"], correct: 1 }
                 ]
             }
         ];
@@ -758,6 +758,9 @@
                 this.questionTimer = null;
                 this.hasAnsweredCurrent = false;
                 this.unsubscribeFirestore = null;
+                this.unsubscribePlayers = null;
+                this.cloudPlayers = {};
+                this.lastBotTick = 0;
 
                 this.loadSavedCustomPacks();
                 this.renderAvatarSelector();
@@ -785,7 +788,7 @@
 
             loadSavedCustomPacks() {
                 try {
-                    const saved = localStorage.getItem('word_adventure_custom_packs');
+                    const saved = localStorage.getItem('word_adventure_custom_packs_v3');
                     if (saved) {
                         const parsed = JSON.parse(saved);
                         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -830,8 +833,12 @@
                             <input type="text" id="eq_text_${packId}_${idx}" value="${q.text}" class="w-full p-2 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-bold text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-black text-slate-700 dark:text-slate-300 mb-1">Image URL (Unsplash or direct image)</label>
-                            <input type="text" id="eq_img_${packId}_${idx}" value="${q.imageUrl}" class="w-full p-2 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-bold text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
+                            <label class="block text-[11px] font-black text-slate-700 dark:text-slate-300 mb-1">Emoji picture (shown big; leave empty to use an image URL)</label>
+                            <input type="text" id="eq_emoji_${packId}_${idx}" value="${q.emoji || ''}" class="w-full p-2 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-bold text-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-black text-slate-700 dark:text-slate-300 mb-1">Image URL (optional)</label>
+                            <input type="text" id="eq_img_${packId}_${idx}" value="${q.imageUrl || ''}" class="w-full p-2 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-bold text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             ${[0, 1, 2, 3].map(optIdx => `
@@ -866,6 +873,8 @@
 
                     if (textEl) q.text = textEl.value.trim();
                     if (imgEl) q.imageUrl = imgEl.value.trim();
+                    const emojiEl = document.getElementById(`eq_emoji_${packId}_${idx}`);
+                    if (emojiEl) q.emoji = emojiEl.value.trim();
                     if (correctEl) q.correct = parseInt(correctEl.value);
 
                     for (let i = 0; i < 4; i++) {
@@ -875,7 +884,7 @@
                 });
 
                 try {
-                    localStorage.setItem('word_adventure_custom_packs', JSON.stringify(QUIZ_PACKS.map(p => ({ id: p.id, questions: p.questions }))));
+                    localStorage.setItem('word_adventure_custom_packs_v3', JSON.stringify(QUIZ_PACKS.map(p => ({ id: p.id, questions: p.questions }))));
                 } catch(e) {}
 
                 this.renderTeacherQuizPacks();
@@ -1072,6 +1081,7 @@
                     quizPack: this.selectedQuizPack,
                     players: {}
                 };
+                this.cloudPlayers = this.roomData.players;
 
                 await this.syncRoomToCloud(true);
                 this.setupLobbyUI();
@@ -1083,20 +1093,25 @@
                 try {
                     if (db) {
                         const roomRef = doc(db, 'rooms', this.roomId);
+                        const roomOnly = {};
+                        Object.keys(this.roomData).forEach(k => { if (k !== 'players') roomOnly[k] = this.roomData[k]; });
+
                         if (isNew) {
-                            await setDoc(roomRef, this.roomData);
-                        } else {
-                            // Oyuncu listesini toptan ezmemek için: sadece oda alanlarını + belirtilen oyuncuları yaz
-                            const upd = {};
-                            Object.keys(this.roomData).forEach(k => {
-                                if (k !== 'players') upd[k] = this.roomData[k];
-                            });
-                            (playerIds || []).forEach(id => {
-                                const pl = this.roomData.players && this.roomData.players[id];
-                                if (pl) upd[`players.${id}`] = pl;
-                            });
-                            await updateDoc(roomRef, upd);
+                            // Eski oyuncu kayıtlarını temizle, sonra yeni odayı yaz
+                            try {
+                                const snap = await getDocs(collection(db, 'rooms', this.roomId, 'players'));
+                                await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
+                            } catch(e) { console.error("Old players cleanup:", e); }
+                            await setDoc(roomRef, roomOnly);
+                        } else if (this.role === 'host') {
+                            await updateDoc(roomRef, roomOnly);
                         }
+
+                        // Her oyuncu kendi belgesine yazar: yarışma sırasında kayıtlar birbirini ezmez
+                        await Promise.all((playerIds || []).map(id => {
+                            const pl = this.roomData.players && this.roomData.players[id];
+                            return pl ? setDoc(doc(db, 'rooms', this.roomId, 'players', id), pl) : null;
+                        }));
                     }
                 } catch(e) {
                     console.error("Cloud sync fallback:", e);
@@ -1110,17 +1125,32 @@
             listenToRoomCloud() {
                 if (!this.roomId) return;
                 if (this.unsubscribeFirestore) this.unsubscribeFirestore();
+                if (this.unsubscribePlayers) this.unsubscribePlayers();
 
                 if (db) {
                     try {
                         const roomRef = doc(db, 'rooms', this.roomId);
                         this.unsubscribeFirestore = onSnapshot(roomRef, (docSnap) => {
                             if (docSnap.exists()) {
-                                this.roomData = docSnap.data();
+                                const d = docSnap.data();
+                                d.players = this.cloudPlayers || {};
+                                this.roomData = d;
                                 this.handleRoomStateChange();
                             }
                         }, (error) => {
                             console.error("Firestore listener error:", error);
+                        });
+
+                        this.unsubscribePlayers = onSnapshot(collection(db, 'rooms', this.roomId, 'players'), (snap) => {
+                            const map = {};
+                            snap.forEach(d => { map[d.id] = d.data(); });
+                            this.cloudPlayers = map;
+                            if (this.roomData) {
+                                this.roomData.players = map;
+                                this.handleRoomStateChange();
+                            }
+                        }, (error) => {
+                            console.error("Players listener error:", error);
                         });
                     } catch(e) {}
                 }
@@ -1176,7 +1206,8 @@
                 }
 
                 this.roomData = foundRoom;
-                if (!this.roomData.players) this.roomData.players = {};
+                this.cloudPlayers = this.roomData.players || {};
+                this.roomData.players = this.cloudPlayers;
 
                 this.roomData.players[this.playerId] = {
                     id: this.playerId,
@@ -1458,6 +1489,9 @@
 
             simulateBotProgress() {
                 if (this.role !== 'host' || !this.roomData?.players) return;
+                const nowTs = Date.now();
+                if (nowTs - this.lastBotTick < 2500) return;
+                this.lastBotTick = nowTs;
                 const packTotal = this.roomData.quizPack ? this.roomData.quizPack.questions.length : 10;
                 let changed = false;
                 Object.values(this.roomData.players).forEach(p => {
@@ -1503,11 +1537,17 @@
                 const imgDisplay = document.getElementById('qImageDisplay');
                 const fallbackIcon = document.getElementById('qFallbackIcon');
 
-                if (q.imageUrl) {
+                if (q.emoji) {
+                    imgDisplay.style.display = 'none';
+                    fallbackIcon.style.display = 'flex';
+                    fallbackIcon.innerHTML = `<span style="font-size:8rem;line-height:1;">${q.emoji}</span>`;
+                } else if (q.imageUrl) {
+                    fallbackIcon.innerHTML = '<i class="fa-solid fa-image"></i>';
                     imgDisplay.style.display = 'block';
                     fallbackIcon.style.display = 'none';
                     imgDisplay.src = q.imageUrl;
                 } else {
+                    fallbackIcon.innerHTML = '<i class="fa-solid fa-image"></i>';
                     imgDisplay.style.display = 'none';
                     fallbackIcon.style.display = 'flex';
                 }
@@ -1746,6 +1786,10 @@
                 if (this.unsubscribeFirestore) {
                     this.unsubscribeFirestore();
                     this.unsubscribeFirestore = null;
+                }
+                if (this.unsubscribePlayers) {
+                    this.unsubscribePlayers();
+                    this.unsubscribePlayers = null;
                 }
                 this.roomData = null;
             }
