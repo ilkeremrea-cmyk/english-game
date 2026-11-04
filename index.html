@@ -1082,7 +1082,7 @@
                 if (!this.roomId) return;
                 try {
                     if (db) {
-                        const roomRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${this.roomId}`);
+                        const roomRef = doc(db, 'rooms', this.roomId);
                         if (isNew) {
                             await setDoc(roomRef, this.roomData);
                         } else {
@@ -1104,7 +1104,7 @@
 
                 if (db) {
                     try {
-                        const roomRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${this.roomId}`);
+                        const roomRef = doc(db, 'rooms', this.roomId);
                         this.unsubscribeFirestore = onSnapshot(roomRef, (docSnap) => {
                             if (docSnap.exists()) {
                                 this.roomData = docSnap.data();
@@ -1143,7 +1143,7 @@
                 let foundRoom = null;
                 if (db) {
                     try {
-                        const roomRef = doc(db, 'artifacts', appId, 'public', 'data', `room_${this.roomId}`);
+                        const roomRef = doc(db, 'rooms', this.roomId);
                         const docSnap = await getDoc(roomRef);
                         if (docSnap.exists()) {
                             foundRoom = docSnap.data();
