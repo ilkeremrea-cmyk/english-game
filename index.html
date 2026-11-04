@@ -1,1618 +1,1374 @@
-<!-- Top Navigation Bar -->
-<header class="w-full bg-white dark:bg-slate-900 border-b-3 border-slate-800 dark:border-slate-700 px-4 py-3 flex items-center justify-between shadow-sm sticky top-0 z-40">
-    <div class="flex items-center gap-3 cursor-pointer" onclick="app.handleBrandClick()">
-        <div class="w-10 h-10 rounded-2xl bg-banana border-3 border-slate-800 dark:border-slate-700 flex items-center justify-center text-xl shadow-sm">
-            <i class="fa-solid fa-book-open text-slate-900"></i>
-        </div>
-        <div>
-            <h1 class="text-xl font-black tracking-tight flex items-center gap-1.5">
-                <span class="text-pink-500">English</span> <span class="text-slate-900 dark:text-white">with</span> <span class="text-sky-500">Words</span>
-            </h1>
-            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">5th Grade English</span>
-        </div>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English with Words - 5th Grade English Vocabulary Adventure</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        banana: '#FFE600',
+                        'banana-light': '#FFF04D',
+                        'banana-dark': '#E6CF00',
+                        mint: '#00E699',
+                        'mint-light': '#33EBB0',
+                        'sky-light': '#E0F2FE',
+                        'sky-dark': '#0369A1'
+                    },
+                    borderWidth: {
+                        '3': '3px',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QRCode.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #F8FAFC;
+            background-image: radial-gradient(#CBD5E1 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+            transition: background-color 0.3s ease;
+        }
+        .dark body {
+            background-color: #0F172A;
+            background-image: radial-gradient(#334155 1.5px, transparent 1.5px);
+        }
+        .cartoon-card {
+            border: 3px solid #1E293B;
+            border-radius: 1.5rem;
+            box-shadow: 4px 4px 0px #1E293B;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .dark .cartoon-card {
+            border-color: #475569;
+            box-shadow: 4px 4px 0px #475569;
+        }
+        .cartoon-btn {
+            border: 3px solid #1E293B;
+            border-radius: 1rem;
+            box-shadow: 3px 3px 0px #1E293B;
+            transition: all 0.1s ease;
+            cursor: pointer;
+        }
+        .dark .cartoon-btn {
+            border-color: #475569;
+            box-shadow: 3px 3px 0px #475569;
+        }
+        .cartoon-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px #1E293B;
+        }
+        .dark .cartoon-btn:hover {
+            box-shadow: 4px 4px 0px #475569;
+        }
+        .cartoon-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #1E293B;
+        }
+        .dark .cartoon-btn:active {
+            box-shadow: 1px 1px 0px #475569;
+        }
+        .option-btn {
+            border: 3px solid #1E293B;
+            border-radius: 1rem;
+            box-shadow: 3px 3px 0px #1E293B;
+            transition: all 0.15s ease;
+        }
+        .dark .option-btn {
+            border-color: #475569;
+            box-shadow: 3px 3px 0px #475569;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 4px 5px 0px #1E293B;
+        }
+        .dark .option-btn:hover:not(:disabled) {
+            box-shadow: 4px 5px 0px #475569;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F1F5F9;
+            border-radius: 9999px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1E293B;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        .pl-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .pl-row {
+            transition: transform 0.2s ease;
+        }
+        .pl-row:hover {
+            transform: scale(1.01);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800 dark:text-slate-100 selection:bg-pink-500 selection:text-white">
 
-    <div class="flex items-center gap-3">
-        <div id="cloudStatusBadge" class="hidden bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 border-2 border-emerald-600 px-3 py-1 rounded-xl text-xs font-black flex items-center gap-1.5">
-            <i class="fa-solid fa-cloud text-emerald-600 animate-pulse"></i>
-            <span>Live Room</span>
-        </div>
-        <button onclick="app.toggleTheme()" id="themeBtn" class="cartoon-btn w-10 h-10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center" title="Toggle Dark/Light Mode">
-            <i id="themeIcon" class="fa-solid fa-moon text-lg text-slate-700 dark:text-amber-300"></i>
-        </button>
-        <button onclick="app.toggleSound()" id="soundBtn" class="cartoon-btn w-10 h-10 bg-amber-100 hover:bg-amber-200 flex items-center justify-center">
-            <i id="soundIcon" class="fa-solid fa-volume-high text-lg text-amber-600"></i>
-        </button>
-        <button onclick="app.openTeacherAuthModal()" class="cartoon-btn bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 font-black text-xs md:text-sm flex items-center gap-2">
-            <i class="fa-solid fa-chalkboard-user"></i>
-            <span>Teacher Panel</span>
-        </button>
-    </div>
-</header>
-
-<main class="max-w-5xl mx-auto w-full p-4 md:p-6 flex-grow flex items-center justify-center">
-
-    <!-- Student Setup View -->
-    <section id="viewPlayerSetup" class="w-full max-w-lg mx-auto">
-        <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 relative overflow-hidden">
-            <div class="text-center mb-6">
-                <span class="bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-200 text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider mb-2 inline-block border-2 border-slate-800 dark:border-slate-700">
-                    5th Grade English Vocabulary Adventure <i class="fa-solid fa-star text-amber-500 ml-1"></i>
-                </span>
-                <h2 class="text-3xl font-black text-slate-800 dark:text-white mt-1">
-                    <span class="text-pink-500">English</span> <span class="text-slate-900 dark:text-white">with</span> <span class="text-sky-500">Words</span> <i class="fa-solid fa-rocket text-pink-500 ml-1"></i>
-                </h2>
-                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold mt-1">Set up your profile and join the live room instantly!</p>
+    <!-- Top Navigation Bar -->
+    <header class="w-full bg-white dark:bg-slate-900 border-b-3 border-slate-800 dark:border-slate-700 px-4 py-3 flex items-center justify-between shadow-sm sticky top-0 z-40">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="app.handleBrandClick()">
+            <div class="w-10 h-10 rounded-2xl bg-banana border-3 border-slate-800 dark:border-slate-700 flex items-center justify-center text-xl shadow-sm">
+                <i class="fa-solid fa-book-open text-slate-900"></i>
             </div>
-
-            <form onsubmit="app.joinRoomAsPlayer(event)" class="space-y-4">
-                <div>
-                    <label class="block text-slate-700 dark:text-slate-300 font-black text-sm mb-1">Username</label>
-                    <input type="text" id="playerNameInput" maxlength="15" required placeholder="e.g. Alex" 
-                           class="w-full p-3 border-3 border-slate-800 dark:border-slate-700 rounded-2xl font-bold text-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-sky-200">
-                </div>
-
-                <div>
-                    <label class="block text-slate-700 dark:text-slate-300 font-black text-sm mb-2">Avatar or Photo</label>
-                    <div class="grid grid-cols-4 gap-2 mb-2" id="avatarSelector">
-                    </div>
-                    <input type="file" id="customAvatarInput" accept="image/*" class="hidden" onchange="app.handleCustomPhotoUpload(event)">
-                    <button type="button" onclick="document.getElementById('customAvatarInput').click()" 
-                            id="customAvatarBtn"
-                            class="cartoon-btn w-full bg-sky-100 hover:bg-sky-200 dark:bg-sky-900 dark:hover:bg-sky-800 text-sky-900 dark:text-sky-200 py-2.5 font-bold text-xs flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-camera text-base"></i>
-                        <span id="customAvatarBtnText">Upload Photo from Gallery <i class="fa-solid fa-image ml-1"></i></span>
-                    </button>
-                </div>
-
-                <button type="submit" class="cartoon-btn w-full bg-pink-500 text-white py-4 font-black text-xl hover:bg-pink-600 mt-2 flex items-center justify-center gap-2">
-                    <span>Join Live Room</span>
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </form>
+            <div>
+                <h1 class="text-xl font-black tracking-tight flex items-center gap-1.5">
+                    <span class="text-pink-500">English</span> <span class="text-slate-900 dark:text-white">with</span> <span class="text-sky-500">Words</span>
+                </h1>
+                <span class="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">5th Grade English</span>
+            </div>
         </div>
-    </section>
 
-    <!-- Teacher Setup View -->
-    <section id="viewTeacherSetup" class="w-full max-w-3xl hidden">
-        <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8">
-            <button onclick="app.showPlayerSetup()" class="cartoon-btn px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm mb-4 flex items-center gap-1">
-                <i class="fa-solid fa-arrow-left"></i> Back to Student Login
+        <div class="flex items-center gap-3">
+            <div id="cloudStatusBadge" class="hidden bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 border-2 border-emerald-600 px-3 py-1 rounded-xl text-xs font-black flex items-center gap-1.5">
+                <i class="fa-solid fa-cloud text-emerald-600 animate-pulse"></i>
+                <span>Live Room</span>
+            </div>
+            <button onclick="app.toggleTheme()" id="themeBtn" class="cartoon-btn w-10 h-10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center" title="Toggle Dark/Light Mode">
+                <i id="themeIcon" class="fa-solid fa-moon text-lg text-slate-700 dark:text-amber-300"></i>
             </button>
-
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b-2 border-slate-100 dark:border-slate-800 pb-4">
-                <div>
-                    <h3 class="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-2">
-                        <i class="fa-solid fa-chalkboard-user text-amber-500"></i>
-                        <span>Teacher Control Panel</span>
-                    </h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm font-bold">Select a 5th grade curriculum quiz pack, edit questions, or host a cloud room.</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="app.openQuestionEditorModal()" class="cartoon-btn bg-amber-200 text-amber-900 px-5 py-3 font-black text-sm hover:bg-amber-300 flex items-center justify-center gap-1.5 w-44">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                        <span>Edit Questions</span>
-                    </button>
-                    <button onclick="app.createNewRoom()" class="cartoon-btn bg-banana text-slate-900 px-5 py-3 font-black text-sm hover:bg-yellow-300 flex items-center justify-center gap-2 w-44">
-                        <span>Create Room</span>
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="mb-6">
-                <h4 class="font-bold text-slate-700 dark:text-slate-300 text-sm uppercase tracking-wider mb-3">Quiz Packs</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="quizPackList">
-                </div>
-            </div>
-
-            <div class="bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl p-4">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="font-bold text-slate-700 dark:text-slate-300 text-sm">Selected Pack Questions (<span id="selectedQuizCount">0</span> Questions)</span>
-                </div>
-                <div id="quizPreviewList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Question Editor Modal -->
-    <div id="questionEditorModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 w-full max-w-3xl text-left relative max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center pb-4 border-b-2 border-slate-100 dark:border-slate-800 mb-4">
-                <div class="flex items-center gap-2">
-                    <div class="w-10 h-10 rounded-xl bg-amber-200 text-amber-900 border-2 border-slate-800 dark:border-slate-700 flex items-center justify-center text-xl">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-black text-slate-800 dark:text-white">Question Editor</h3>
-                        <p class="text-xs font-bold text-slate-500 dark:text-slate-400">Customize quiz questions, images, and correct answers.</p>
-                    </div>
-                </div>
-                <button onclick="app.closeQuestionEditorModal()" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-black text-xl">✕</button>
-            </div>
-
-            <div class="mb-4 flex items-center gap-3">
-                <label class="font-bold text-xs text-slate-700 dark:text-slate-300 uppercase">Select Quiz Pack:</label>
-                <select id="editorPackSelect" onchange="app.switchEditorPack(this.value)" class="p-2 border-2 border-slate-800 dark:border-slate-700 rounded-xl font-bold text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white">
-                </select>
-            </div>
-
-            <div id="editorQuestionsList" class="space-y-4 overflow-y-auto custom-scrollbar flex-grow pr-2 mb-4">
-            </div>
-
-            <div class="pt-4 border-t-2 border-slate-100 dark:border-slate-800 flex justify-end gap-3">
-                <button onclick="app.closeQuestionEditorModal()" class="cartoon-btn bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-5 py-2.5 font-bold text-sm">
-                    Close
-                </button>
-                <button onclick="app.saveCustomQuestions()" class="cartoon-btn bg-emerald-400 text-slate-900 px-6 py-2.5 font-black text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    <span>Save Changes</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Lobby View -->
-    <section id="viewLobby" class="w-full max-w-4xl hidden">
-        <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 text-center relative">
-            <div id="hostBackToPanelBtnContainer" class="hidden absolute top-4 left-4">
-                <button onclick="app.showTeacherSetup()" class="cartoon-btn px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1">
-                    <i class="fa-solid fa-arrow-left"></i> Back to Panel
-                </button>
-            </div>
-
-            <!-- QR Code & Cloud PIN Card -->
-            <div class="bg-banana p-5 rounded-3xl border-3 border-slate-800 mb-6 inline-block w-full max-w-lg shadow-sm mt-2 text-center">
-                <span class="text-xs uppercase tracking-widest font-extrabold text-slate-700">Cloud Live Room</span>
-                <div class="text-2xl font-black text-slate-900 my-1">Scan to Join!</div>
-                <p class="text-xs font-bold text-slate-700 mb-4">Students scan the QR code with their phone to open the game and enter their info.</p>
-                
-                <div class="bg-white p-3 rounded-2xl border-2 border-slate-800 inline-block mb-3 shadow-inner">
-                    <div id="qrcode" class="w-36 h-36 mx-auto flex items-center justify-center"></div>
-                </div>
-
-                <div class="flex items-center justify-center gap-2 bg-white/90 p-2 rounded-xl border-2 border-slate-800">
-                    <input type="text" id="shareableLinkInput" oninput="app.onShareLinkEdited()" class="w-full bg-transparent text-xs font-bold text-slate-800 px-2 outline-none" value="" />
-                    <button onclick="app.copyShareableLink()" class="cartoon-btn bg-sky-500 hover:bg-sky-600 text-white px-3 py-1.5 text-xs font-black">
-                        <i class="fa-solid fa-copy"></i> Copy
-                    </button>
-                </div>
-                <p id="shareLinkWarning" class="hidden text-[11px] font-bold text-red-700 mt-2">This page is opened from a local file, so phones cannot reach it. Upload the game to a website (e.g. GitHub Pages, Netlify) and paste its public link above — the QR code updates automatically.</p>
-            </div>
-
-            <div class="flex justify-between items-center mb-4 px-2">
-                <h4 class="font-black text-slate-800 dark:text-white text-xl flex items-center gap-2">
-                    <i class="fa-solid fa-users text-sky-500"></i>
-                    <span>Active Players</span>
-                    <span id="playerCountBadge" class="bg-sky-500 text-white text-sm px-3 py-0.5 rounded-full border-2 border-slate-800 font-black">0</span>
-                </h4>
-                <span id="lobbyStatusText" class="text-slate-500 dark:text-slate-400 font-bold text-sm">Waiting for players to join...</span>
-            </div>
-
-            <div id="lobbyPlayersGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 min-h-[160px] p-4 bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl mb-6">
-            </div>
-
-            <div id="hostLobbyControls" class="hidden flex flex-col sm:flex-row justify-center gap-3">
-                <button onclick="app.addBotPlayer()" class="cartoon-btn bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-4 py-3 font-bold text-sm flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-robot text-sky-600"></i>
-                    <span>Add Bot Player (Test)</span>
-                </button>
-                <button onclick="app.startGame()" class="cartoon-btn bg-mint text-slate-900 px-8 py-3 font-black text-xl hover:bg-emerald-400 flex items-center justify-center gap-2">
-                    <span>Start Competition!</span>
-                    <i class="fa-solid fa-play"></i>
-                </button>
-            </div>
-
-            <div id="playerLobbyNotice" class="hidden bg-sky-light border-2 border-sky p-4 rounded-2xl text-sky-dark font-black text-base flex items-center justify-center gap-2">
-                <i class="fa-solid fa-spinner fa-spin text-lg"></i>
-                <span>Waiting for the teacher to start the game... Get ready!</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Question View -->
-    <section id="viewQuestion" class="w-full max-w-4xl hidden">
-        <div class="flex justify-between items-center mb-4">
-            <span class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white border-2 border-slate-800 dark:border-slate-700 px-4 py-2 rounded-xl font-black text-sm" id="qProgressText">
-                Question 1 / 10
-            </span>
-            <div class="bg-banana border-2 border-slate-800 px-4 py-2 rounded-xl font-black text-slate-900 flex items-center gap-2 text-xl">
-                <i class="fa-solid fa-clock text-amber-600"></i>
-                <span id="qTimerText">10</span>s
-            </div>
-            <span class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white border-2 border-slate-800 dark:border-slate-700 px-4 py-2 rounded-xl font-black text-sm hidden md:inline" id="qCategoryBadge">
-                Vocabulary
-            </span>
-        </div>
-
-        <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 text-center mb-6 relative overflow-hidden">
-            <div class="w-full max-w-md h-72 mx-auto mb-4 rounded-2xl border-3 border-slate-800 dark:border-slate-700 overflow-hidden shadow-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative">
-                <img id="qImageDisplay" src="" alt="Question Visual" class="w-full h-full object-cover" 
-                     onerror="this.style.display='none'; document.getElementById('qFallbackIcon').style.display='flex';"/>
-                <div id="qFallbackIcon" class="hidden w-full h-full items-center justify-center text-6xl text-amber-500 bg-amber-50 dark:bg-slate-800">
-                    <i class="fa-solid fa-image"></i>
-                </div>
-            </div>
-
-            <h3 class="text-2xl md:text-3xl font-black text-slate-800 dark:text-white mb-2" id="qTextDisplay">
-                Question text goes here?
-            </h3>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="answerOptionsGrid">
-            <button onclick="app.submitAnswer(0)" id="btnOpt0" class="cartoon-btn option-btn bg-white dark:bg-slate-900 text-slate-800 dark:text-white hover:bg-amber-50 dark:hover:bg-slate-800 p-5 text-left flex items-center gap-4 text-xl font-black">
-                <span class="w-10 h-10 rounded-xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center font-black shrink-0">A</span>
-                <span class="option-text flex-grow">Option A</span>
+            <button onclick="app.toggleSound()" id="soundBtn" class="cartoon-btn w-10 h-10 bg-amber-100 hover:bg-amber-200 flex items-center justify-center">
+                <i id="soundIcon" class="fa-solid fa-volume-high text-lg text-amber-600"></i>
             </button>
-
-            <button onclick="app.submitAnswer(1)" id="btnOpt1" class="cartoon-btn option-btn bg-white dark:bg-slate-900 text-slate-800 dark:text-white hover:bg-amber-50 dark:hover:bg-slate-800 p-5 text-left flex items-center gap-4 text-xl font-black">
-                <span class="w-10 h-10 rounded-xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center font-black shrink-0">B</span>
-                <span class="option-text flex-grow">Option B</span>
-            </button>
-
-            <button onclick="app.submitAnswer(2)" id="btnOpt2" class="cartoon-btn option-btn bg-white dark:bg-slate-900 text-slate-800 dark:text-white hover:bg-amber-50 dark:hover:bg-slate-800 p-5 text-left flex items-center gap-4 text-xl font-black">
-                <span class="w-10 h-10 rounded-xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center font-black shrink-0">C</span>
-                <span class="option-text flex-grow">Option C</span>
-            </button>
-
-            <button onclick="app.submitAnswer(3)" id="btnOpt3" class="cartoon-btn option-btn bg-white dark:bg-slate-900 text-slate-800 dark:text-white hover:bg-amber-50 dark:hover:bg-slate-800 p-5 text-left flex items-center gap-4 text-xl font-black">
-                <span class="w-10 h-10 rounded-xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center font-black shrink-0">D</span>
-                <span class="option-text flex-grow">Option D</span>
+            <button onclick="app.openTeacherAuthModal()" class="cartoon-btn bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 font-black text-xs md:text-sm flex items-center gap-2">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <span>Teacher Panel</span>
             </button>
         </div>
+    </header>
 
-        <div id="playerSubmittedOverlay" class="hidden border-3 rounded-2xl p-6 text-center mt-4 font-bold">
-            <span id="feedbackIcon" class="text-4xl block mb-1"><i class="fa-solid fa-circle-check text-emerald-500"></i></span>
-            <div id="feedbackText" class="text-xl font-black">Answer Received!</div>
-            <div id="feedbackPoints" class="text-sm font-bold opacity-90 mt-1">+ Points</div>
-        </div>
-    </section>
+    <main class="max-w-5xl mx-auto w-full p-4 md:p-6 flex-grow flex items-center justify-center">
 
-    <!-- Teacher Scoreboard View -->
-    <section id="viewTeacherScoreboard" class="w-full max-w-4xl hidden">
-        <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 text-center relative">
-            <div class="absolute top-4 left-4">
-                <button onclick="app.showTeacherSetup()" class="cartoon-btn px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1">
-                    <i class="fa-solid fa-arrow-left"></i> Back to Panel
-                </button>
-            </div>
-
-            <div class="flex justify-between items-center mb-6 border-b-2 border-slate-100 dark:border-slate-800 pb-4 mt-8">
-                <div class="text-left">
-                    <span class="bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200 text-xs font-black px-3 py-1 rounded-full uppercase border border-pink-300 dark:border-pink-700 flex items-center gap-1.5 w-max">
-                        <i class="fa-solid fa-trophy text-amber-500"></i>
-                        <span>English with Words Leaderboard</span>
+        <!-- Student Setup View -->
+        <section id="viewPlayerSetup" class="w-full max-w-lg mx-auto">
+            <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 relative overflow-hidden">
+                <div class="text-center mb-6">
+                    <span class="bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-200 text-xs font-black px-3.5 py-1 rounded-full uppercase tracking-wider mb-2 inline-block border-2 border-slate-800 dark:border-slate-700">
+                        5th Grade English Vocabulary Adventure <i class="fa-solid fa-star text-amber-500 ml-1"></i>
                     </span>
-                    <h3 class="text-3xl font-black text-slate-800 dark:text-white mt-1 flex items-center gap-2" id="scoreboardTitleText">
-                        <span>Live Standings Table</span>
-                    </h3>
+                    <h2 class="text-3xl font-black text-slate-800 dark:text-white mt-1">
+                        <span class="text-pink-500">English</span> <span class="text-slate-900 dark:text-white">with</span> <span class="text-sky-500">Words</span> <i class="fa-solid fa-rocket text-pink-500 ml-1"></i>
+                    </h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-bold mt-1">Set up your profile and join the live room instantly!</p>
                 </div>
-                <button id="endGameBtn" onclick="app.endGameAsHost()" class="cartoon-btn bg-amber-400 text-slate-900 px-5 py-2.5 font-black text-sm flex items-center gap-1.5 hover:bg-amber-300">
-                    <i class="fa-solid fa-flag-checkered"></i>
-                    <span>Finalize Competition</span>
+
+                <form onsubmit="app.joinRoomAsPlayer(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-slate-700 dark:text-slate-300 font-black text-sm mb-1">Username</label>
+                        <input type="text" id="playerNameInput" maxlength="15" required placeholder="e.g. Alex" 
+                               class="w-full p-3 border-3 border-slate-800 dark:border-slate-700 rounded-2xl font-bold text-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-sky-200">
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-700 dark:text-slate-300 font-black text-sm mb-2">Avatar or Photo</label>
+                        <div class="grid grid-cols-4 gap-2 mb-2" id="avatarSelector">
+                        </div>
+                        <input type="file" id="customAvatarInput" accept="image/*" class="hidden" onchange="app.handleCustomPhotoUpload(event)">
+                        <button type="button" onclick="document.getElementById('customAvatarInput').click()" 
+                                id="customAvatarBtn"
+                                class="cartoon-btn w-full bg-sky-100 hover:bg-sky-200 dark:bg-sky-900 dark:hover:bg-sky-800 text-sky-900 dark:text-sky-200 py-2.5 font-bold text-xs flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-camera text-base"></i>
+                            <span id="customAvatarBtnText">Upload Photo from Gallery <i class="fa-solid fa-image ml-1"></i></span>
+                        </button>
+                    </div>
+
+                    <button type="submit" class="cartoon-btn w-full bg-pink-500 text-white py-4 font-black text-xl hover:bg-pink-600 mt-2 flex items-center justify-center gap-2">
+                        <span>Join Live Room</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Teacher Setup View -->
+        <section id="viewTeacherSetup" class="w-full max-w-3xl hidden">
+            <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8">
+                <button onclick="app.showPlayerSetup()" class="cartoon-btn px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm mb-4 flex items-center gap-1">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Student Login
+                </button>
+
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b-2 border-slate-100 dark:border-slate-800 pb-4">
+                    <div>
+                        <h3 class="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chalkboard-user text-amber-500"></i>
+                            <span>Teacher Control Panel</span>
+                        </h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm font-bold">Select a 5th grade curriculum quiz pack, edit questions, or host a cloud room.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="app.openQuestionEditorModal()" class="cartoon-btn bg-amber-200 text-amber-900 px-5 py-3 font-black text-sm hover:bg-amber-300 flex items-center justify-center gap-1.5 w-44">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <span>Edit Questions</span>
+                        </button>
+                        <button onclick="app.createNewRoom()" class="cartoon-btn bg-banana text-slate-900 px-5 py-3 font-black text-sm hover:bg-yellow-300 flex items-center justify-center gap-2 w-44">
+                            <span>Create Room</span>
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="font-bold text-slate-700 dark:text-slate-300 text-sm uppercase tracking-wider mb-3">Quiz Packs</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="quizPackList">
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-2xl p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-bold text-slate-700 dark:text-slate-300 text-sm">Selected Pack Questions (<span id="selectedQuizCount">0</span> Questions)</span>
+                    </div>
+                    <div id="quizPreviewList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Question Editor Modal -->
+        <div id="questionEditorModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 w-full max-w-3xl text-left relative max-h-[90vh] flex flex-col">
+                <div class="flex justify-between items-center pb-4 border-b-2 border-slate-100 dark:border-slate-800 mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-10 h-10 rounded-xl bg-amber-200 text-amber-900 border-2 border-slate-800 dark:border-slate-700 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black text-slate-800 dark:text-white">Question Editor</h3>
+                            <p class="text-xs font-bold text-slate-500 dark:text-slate-400">Customize quiz questions, images, and correct answers.</p>
+                        </div>
+                    </div>
+                    <button onclick="app.closeQuestionEditorModal()" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-black text-xl">✕</button>
+                </div>
+
+                <div class="mb-4 flex items-center gap-3">
+                    <label class="font-bold text-xs text-slate-700 dark:text-slate-300 uppercase">Select Quiz Pack:</label>
+                    <select id="editorPackSelect" onchange="app.switchEditorPack(this.value)" class="p-2 border-2 border-slate-800 dark:border-slate-700 rounded-xl font-bold text-sm bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white">
+                    </select>
+                </div>
+
+                <div id="editorQuestionsList" class="space-y-4 overflow-y-auto custom-scrollbar flex-grow pr-2 mb-4">
+                </div>
+
+                <div class="pt-4 border-t-2 border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+                    <button onclick="app.closeQuestionEditorModal()" class="cartoon-btn bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-5 py-2.5 font-bold text-sm">
+                        Close
+                    </button>
+                    <button onclick="app.saveCustomQuestions()" class="cartoon-btn bg-emerald-400 text-slate-900 px-6 py-2.5 font-black text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Save Changes</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lobby View -->
+        <section id="viewLobby" class="w-full max-w-4xl hidden">
+            <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 text-center relative">
+                <div id="hostBackToPanelBtnContainer" class="hidden absolute top-4 left-4">
+                    <button onclick="app.showTeacherSetup()" class="cartoon-btn px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Panel
+                    </button>
+                </div>
+
+                <!-- QR Code Card -->
+                <div class="bg-banana p-5 rounded-3xl border-3 border-slate-800 mb-6 inline-block w-full max-w-sm shadow-sm mt-2 text-center">
+                    <div class="bg-white p-3 rounded-2xl border-2 border-slate-800 inline-block shadow-inner">
+                        <div id="qrcode" class="w-40 h-40 mx-auto flex items-center justify-center"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <h4 class="font-black text-slate-800 dark:text-white text-xl flex items-center gap-2">
+                        <i class="fa-solid fa-users text-sky-500"></i>
+                        <span>Active Players</span>
+                        <span id="playerCountBadge" class="bg-sky-500 text-white text-sm px-3 py-0.5 rounded-full border-2 border-slate-800 font-black">0</span>
+                    </h4>
+                    <span id="lobbyStatusText" class="text-slate-500 dark:text-slate-400 font-bold text-sm">Waiting for players to join...</span>
+                </div>
+
+                <div id="lobbyPlayersGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 min-h-[160px] p-4 bg-slate-50 dark:bg-slate-800 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl mb-6">
+                </div>
+
+                <div id="hostLobbyControls" class="hidden flex flex-col sm:flex-row justify-center gap-3">
+                    <button onclick="app.addBotPlayer()" class="cartoon-btn bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-4 py-3 font-bold text-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-robot text-sky-600"></i>
+                        <span>Add Bot Player (Test)</span>
+                    </button>
+                    <button onclick="app.startGame()" class="cartoon-btn bg-mint text-slate-900 px-8 py-3 font-black text-xl hover:bg-emerald-400 flex items-center justify-center gap-2">
+                        <span>Start Competition!</span>
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                </div>
+
+                <div id="playerLobbyNotice" class="hidden bg-sky-light border-2 border-sky p-4 rounded-2xl text-sky-dark font-black text-base flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-spinner fa-spin text-lg"></i>
+                    <span>Waiting for the teacher to start the game... Get ready!</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Question View -->
+        <section id="viewQuestion" class="w-full max-w-4xl hidden">
+            <div class="flex justify-between items-center mb-4">
+                <span class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white border-2 border-slate-800 dark:border-slate-700 px-4 py-2 rounded-xl font-black text-sm" id="qProgressText">
+                    Question 1 / 10
+                </span>
+                <div class="bg-banana border-2 border-slate-800 px-4 py-2 rounded-xl font-black text-slate-900 flex items-center gap-2 text-xl">
+                    <i class="fa-solid fa-clock text-amber-600"></i>
+                    <span id="qTimerText">10</span>s
+                </div>
+                <span class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white border-2 border-slate-800 dark:border-slate-700 px-4 py-2 rounded-xl font-black text-sm hidden md:inline" id="qCategoryBadge">
+                    Vocabulary
+                </span>
+            </div>
+
+            <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 text-center mb-6 relative overflow-hidden">
+                <div class="w-full max-w-md h-72 mx-auto mb-4 rounded-2xl border-3 border-slate-800 dark:border-slate-700 overflow-hidden shadow-md bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative">
+                    <img id="qImageDisplay" src="" alt="Question Visual" class="w-full h-full object-cover" 
+                         onerror="this.style.display='none'; document.getElementById('qFallbackIcon').style.display='flex';"/>
+                    <div id="qFallbackIcon" class="hidden w-full h-full items-center justify-center text-6xl text-amber-500 bg-amber-50 dark:bg-slate-800">
+                        <i class="fa-solid fa-image"></i>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl md:text-3xl font-black text-slate-800 dark:text-white mb-2" id="qTextDisplay">
+                    Question text goes here?
+                </h3>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="answerOptionsGrid">
+                <button onclick="app.submitAnswer(0)" id="btnOpt0" class="cartoon-btn option-btn bg-white dark:bg-slate-900 text-slate-800 dark:text-white hover:bg-amber-50 dark:hover:bg-slate-800 p-5 text-left flex items-center gap-4 text-xl font-black">
+                    <span class="w-10 h-10 rounded-xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center font-black shrink-0">A</span>
+                    <span class="option-text flex-grow">Option A</span>
+                </button>
+
+                <button onclick="app.submitAnswer(1)" id="btnOpt1" class="cartoon-btn option-btn bg-white dark:bg-slate-900 text-slate-800 dark:text-white hover:bg-amber-50 dark:hover:bg-slate-800 p-5 text-left flex items-center gap-4 text-xl font-black">
+                    <span class="w-10 h-10 rounded-xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center font-black shrink-0">B</span>
+                    <span class="option-text flex-grow">Option B</span>
+                </button>
+
+                <button onclick="app.submitAnswer(2)" id="btnOpt2" class="cartoon-btn option-btn bg-white dark:bg-slate-900 text-slate-800 dark:text-white hover:bg-amber-50 dark:hover:bg-slate-800 p-5 text-left flex items-center gap-4 text-xl font-black">
+                    <span class="w-10 h-10 rounded-xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center font-black shrink-0">C</span>
+                    <span class="option-text flex-grow">Option C</span>
+                </button>
+
+                <button onclick="app.submitAnswer(3)" id="btnOpt3" class="cartoon-btn option-btn bg-white dark:bg-slate-900 text-slate-800 dark:text-white hover:bg-amber-50 dark:hover:bg-slate-800 p-5 text-left flex items-center gap-4 text-xl font-black">
+                    <span class="w-10 h-10 rounded-xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center font-black shrink-0">D</span>
+                    <span class="option-text flex-grow">Option D</span>
                 </button>
             </div>
 
-            <!-- Gartic.io Style Podium View (Hidden until Finalize is clicked) -->
-            <div id="podiumContainer" class="hidden mb-8">
-                <div class="bg-gradient-to-b from-sky-100 to-amber-50 dark:from-slate-800 dark:to-slate-900 border-3 border-slate-800 dark:border-slate-700 rounded-3xl p-6 text-center relative overflow-hidden shadow-inner">
-                    <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">🏆 Competition Podium 🏆</h3>
-                    <p class="text-xs font-bold text-slate-600 dark:text-slate-400 mb-6">Fantastic performance by all students!</p>
+            <div id="playerSubmittedOverlay" class="hidden border-3 rounded-2xl p-6 text-center mt-4 font-bold">
+                <span id="feedbackIcon" class="text-4xl block mb-1"><i class="fa-solid fa-circle-check text-emerald-500"></i></span>
+                <div id="feedbackText" class="text-xl font-black">Answer Received!</div>
+                <div id="feedbackPoints" class="text-sm font-bold opacity-90 mt-1">+ Points</div>
+            </div>
+        </section>
 
-                    <!-- Podium Stands -->
-                    <div class="flex justify-center items-end gap-3 sm:gap-6 pt-8 pb-4 min-h-[220px]" id="podiumStands">
-                    </div>
+        <!-- Teacher Scoreboard View -->
+        <section id="viewTeacherScoreboard" class="w-full max-w-4xl hidden">
+            <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 text-center relative">
+                <div class="absolute top-4 left-4">
+                    <button onclick="app.showTeacherSetup()" class="cartoon-btn px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-arrow-left"></i> Back to Panel
+                    </button>
                 </div>
-            </div>
 
-            <div class="overflow-x-auto">
-                <table class="pl-table text-left">
-                    <thead>
-                        <tr class="text-slate-500 dark:text-slate-400 font-black text-xs uppercase tracking-wider pb-2 border-b-2 border-slate-200 dark:border-slate-700">
-                            <th class="py-2 px-3 text-center w-12">POS</th>
-                            <th class="py-2 px-3">Player</th>
-                            <th class="py-2 px-3 text-center" title="Questions Played"><i class="fa-solid fa-circle-question text-sky-500 text-sm"></i></th>
-                            <th class="py-2 px-3 text-center" title="Correct Answers"><i class="fa-solid fa-check text-emerald-600 text-sm"></i></th>
-                            <th class="py-2 px-3 text-center" title="Wrong Answers"><i class="fa-solid fa-xmark text-rose-500 text-sm"></i></th>
-                            <th class="py-2 px-3 text-right pr-4 font-extrabold text-slate-900 dark:text-white">PTS</th>
-                        </tr>
-                    </thead>
-                    <tbody id="teacherLeaderboardList">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
+                <div class="flex justify-between items-center mb-6 border-b-2 border-slate-100 dark:border-slate-800 pb-4 mt-8">
+                    <div class="text-left">
+                        <span class="bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200 text-xs font-black px-3 py-1 rounded-full uppercase border border-pink-300 dark:border-pink-700 flex items-center gap-1.5 w-max">
+                            <i class="fa-solid fa-trophy text-amber-500"></i>
+                            <span>English with Words Leaderboard</span>
+                        </span>
+                        <h3 class="text-3xl font-black text-slate-800 dark:text-white mt-1 flex items-center gap-2" id="scoreboardTitleText">
+                            <span>Live Standings Table</span>
+                        </h3>
+                    </div>
+                    <button id="endGameBtn" onclick="app.endGameAsHost()" class="cartoon-btn bg-amber-400 text-slate-900 px-5 py-2.5 font-black text-sm flex items-center gap-1.5 hover:bg-amber-300">
+                        <i class="fa-solid fa-flag-checkered"></i>
+                        <span>Finalize Competition</span>
+                    </button>
+                </div>
 
-    <!-- Game Over View (Student) -->
-    <section id="viewGameOver" class="w-full max-w-xl text-center hidden">
-        <div class="cartoon-card bg-white dark:bg-slate-900 p-8 relative overflow-hidden">
-            <div class="w-20 h-20 mx-auto bg-amber-100 border-3 border-slate-800 dark:border-slate-700 rounded-2xl flex items-center justify-center text-4xl text-amber-500 mb-4 shadow-md animate-bounce">
-                <i class="fa-solid fa-award"></i>
-            </div>
-            <h2 class="text-3xl font-black text-slate-800 dark:text-white mb-2">Quiz Completed!</h2>
-            
-            <!-- Personal Rank Banner (Hidden until Finalize Competition is clicked) -->
-            <div id="studentRankBanner" class="bg-amber-100 border-3 border-slate-800 p-3 rounded-2xl text-amber-900 font-black text-lg mb-4 hidden">
-                🎉 You finished in <span id="studentRankNum">1st</span> Place! 🥇
-            </div>
-            <p class="text-slate-500 dark:text-slate-400 font-bold mb-6" id="gameOverSubText">Fantastic job! You successfully completed all questions.</p>
+                <!-- Gartic.io Style Podium View (Hidden until Finalize is clicked) -->
+                <div id="podiumContainer" class="hidden mb-8">
+                    <div class="bg-gradient-to-b from-sky-100 to-amber-50 dark:from-slate-800 dark:to-slate-900 border-3 border-slate-800 dark:border-slate-700 rounded-3xl p-6 text-center relative overflow-hidden shadow-inner">
+                        <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">🏆 Competition Podium 🏆</h3>
+                        <p class="text-xs font-bold text-slate-600 dark:text-slate-400 mb-6">Fantastic performance by all students!</p>
 
-            <!-- Waiting for others notice -->
-            <div id="waitingFinalNotice" class="bg-sky-light border-3 border-sky p-6 rounded-2xl text-sky-dark font-black text-lg mb-6 flex flex-col items-center gap-2">
-                <i class="fa-solid fa-hourglass-half fa-spin text-2xl text-sky-600"></i>
-                <span>Sonuçlar bekleniyor...</span>
-                <p class="text-xs font-bold text-slate-600 dark:text-slate-400 mt-1">Diğer katılımcıların yarışmayı tamamlaması bekleniyor. Lütfen bekleyin!</p>
-            </div>
-
-            <!-- Final Standings Table for Student (Hidden until everyone finishes) -->
-            <div id="studentFinalLeaderboardContainer" class="hidden mb-6 text-left">
-                <h4 class="font-black text-slate-800 dark:text-white text-lg mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-trophy text-amber-500"></i>
-                    <span>Final Standings Results</span>
-                </h4>
-                <!-- Gartic.io Style Student Podium -->
-                <div class="bg-gradient-to-b from-sky-100 to-amber-50 dark:from-slate-800 dark:to-slate-900 border-3 border-slate-800 dark:border-slate-700 rounded-3xl p-4 text-center mb-6 overflow-hidden">
-                    <div class="flex justify-center items-end gap-2 sm:gap-4 pt-6 pb-2 min-h-[180px]" id="studentPodiumStands">
+                        <!-- Podium Stands -->
+                        <div class="flex justify-center items-end gap-3 sm:gap-6 pt-8 pb-4 min-h-[220px]" id="podiumStands">
+                        </div>
                     </div>
                 </div>
 
-                <div class="overflow-x-auto max-h-48 overflow-y-auto custom-scrollbar">
+                <div class="overflow-x-auto">
                     <table class="pl-table text-left">
                         <thead>
                             <tr class="text-slate-500 dark:text-slate-400 font-black text-xs uppercase tracking-wider pb-2 border-b-2 border-slate-200 dark:border-slate-700">
                                 <th class="py-2 px-3 text-center w-12">POS</th>
                                 <th class="py-2 px-3">Player</th>
-                                <th class="py-2 px-3 text-center">PTS</th>
+                                <th class="py-2 px-3 text-center" title="Questions Played"><i class="fa-solid fa-circle-question text-sky-500 text-sm"></i></th>
+                                <th class="py-2 px-3 text-center" title="Correct Answers"><i class="fa-solid fa-check text-emerald-600 text-sm"></i></th>
+                                <th class="py-2 px-3 text-center" title="Wrong Answers"><i class="fa-solid fa-xmark text-rose-500 text-sm"></i></th>
+                                <th class="py-2 px-3 text-right pr-4 font-extrabold text-slate-900 dark:text-white">PTS</th>
                             </tr>
                         </thead>
-                        <tbody id="studentFinalLeaderboardList">
+                        <tbody id="teacherLeaderboardList">
                         </tbody>
                     </table>
                 </div>
             </div>
+        </section>
 
-            <button onclick="app.resetToHome()" class="cartoon-btn w-full bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 py-3.5 font-black text-base hover:bg-slate-300 dark:hover:bg-slate-700 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-house"></i>
-                <span>Return to Home Menu</span>
+        <!-- Game Over View (Student) -->
+        <section id="viewGameOver" class="w-full max-w-xl text-center hidden">
+            <div class="cartoon-card bg-white dark:bg-slate-900 p-8 relative overflow-hidden">
+                <div class="w-20 h-20 mx-auto bg-amber-100 border-3 border-slate-800 dark:border-slate-700 rounded-2xl flex items-center justify-center text-4xl text-amber-500 mb-4 shadow-md animate-bounce">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h2 class="text-3xl font-black text-slate-800 dark:text-white mb-2">Quiz Completed!</h2>
+                
+                <!-- Personal Rank Banner (Hidden until Finalize Competition is clicked) -->
+                <div id="studentRankBanner" class="bg-amber-100 border-3 border-slate-800 p-3 rounded-2xl text-amber-900 font-black text-lg mb-4 hidden">
+                    🎉 You finished in <span id="studentRankNum">1st</span> Place! 🥇
+                </div>
+                <p class="text-slate-500 dark:text-slate-400 font-bold mb-6" id="gameOverSubText">Fantastic job! You successfully completed all questions.</p>
+
+                <!-- Waiting for others notice -->
+                <div id="waitingFinalNotice" class="bg-sky-light border-3 border-sky p-6 rounded-2xl text-sky-dark font-black text-lg mb-6 flex flex-col items-center gap-2">
+                    <i class="fa-solid fa-hourglass-half fa-spin text-2xl text-sky-600"></i>
+                    <span>Sonuçlar bekleniyor...</span>
+                    <p class="text-xs font-bold text-slate-600 dark:text-slate-400 mt-1">Diğer katılımcıların yarışmayı tamamlaması bekleniyor. Lütfen bekleyin!</p>
+                </div>
+
+                <!-- Final Standings Table for Student (Hidden until everyone finishes) -->
+                <div id="studentFinalLeaderboardContainer" class="hidden mb-6 text-left">
+                    <h4 class="font-black text-slate-800 dark:text-white text-lg mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-trophy text-amber-500"></i>
+                        <span>Final Standings Results</span>
+                    </h4>
+                    <!-- Gartic.io Style Student Podium -->
+                    <div class="bg-gradient-to-b from-sky-100 to-amber-50 dark:from-slate-800 dark:to-slate-900 border-3 border-slate-800 dark:border-slate-700 rounded-3xl p-4 text-center mb-6 overflow-hidden">
+                        <div class="flex justify-center items-end gap-2 sm:gap-4 pt-6 pb-2 min-h-[180px]" id="studentPodiumStands">
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto max-h-48 overflow-y-auto custom-scrollbar">
+                        <table class="pl-table text-left">
+                            <thead>
+                                <tr class="text-slate-500 dark:text-slate-400 font-black text-xs uppercase tracking-wider pb-2 border-b-2 border-slate-200 dark:border-slate-700">
+                                    <th class="py-2 px-3 text-center w-12">POS</th>
+                                    <th class="py-2 px-3">Player</th>
+                                    <th class="py-2 px-3 text-center">PTS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentFinalLeaderboardList">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <button onclick="app.resetToHome()" class="cartoon-btn w-full bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 py-3.5 font-black text-base hover:bg-slate-300 dark:hover:bg-slate-700 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Return to Home Menu</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Teacher Auth Modal -->
+    <div id="teacherAuthModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 w-full max-w-md text-center relative">
+            <button onclick="app.closeTeacherAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-black text-xl">
+                ✕
             </button>
-        </div>
-    </section>
-
-</main>
-
-<!-- Teacher Auth Modal -->
-<div id="teacherAuthModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="cartoon-card bg-white dark:bg-slate-900 p-6 md:p-8 w-full max-w-md text-center relative">
-        <button onclick="app.closeTeacherAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-black text-xl">
-            ✕
-        </button>
-        
-        <div class="w-16 h-16 mx-auto bg-amber-100 border-2 border-slate-800 dark:border-slate-700 rounded-2xl flex items-center justify-center text-3xl text-amber-600 mb-3">
-            <i class="fa-solid fa-lock"></i>
-        </div>
-        <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-1">Teacher Login</h3>
-        <p class="text-slate-500 dark:text-slate-400 text-xs font-bold mb-5">Enter password to access teacher control panel.</p>
-
-        <form onsubmit="app.verifyTeacherPassword(event)" class="space-y-4">
-            <div>
-                <input type="password" id="teacherPasswordInput" required placeholder="Password..." 
-                       class="w-full text-center text-xl font-black p-3 border-3 border-slate-800 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-sky-light">
-                <p id="passwordErrorText" class="text-rose-500 text-xs font-black mt-2 hidden">⚠️ Incorrect password! Please try again.</p>
-            </div>
-
-            <div class="flex gap-2">
-                <button type="button" onclick="app.closeTeacherAuthModal()" class="cartoon-btn w-1/3 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-3 font-bold text-sm">
-                    Cancel
-                </button>
-                <button type="submit" class="cartoon-btn w-2/3 bg-sky-500 hover:bg-sky-600 text-white py-3 font-black text-base flex items-center justify-center gap-1.5">
-                    <span>Login</span>
-                    <i class="fa-solid fa-key"></i>
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<footer class="w-full text-center py-3 text-slate-500 dark:text-slate-400 font-bold text-xs border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60">
-    English with Words &bull; Designed for 5th Grade English Learners <i class="fa-solid fa-castle text-pink-400 ml-1"></i>
-</footer>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-
-    let appId = 'word-adventure-default';
-    try {
-        if (typeof __app_id !== 'undefined') appId = __app_id;
-    } catch (e) {}
-
-    let firebaseConfig = null;
-    try {
-        if (typeof __firebase_config !== 'undefined') {
-            firebaseConfig = JSON.parse(__firebase_config);
-        }
-    } catch (e) {}
-
-    const ROOM_ID = 'main';
-
-    const MY_FIREBASE_CONFIG = {
-        apiKey: "AIzaSyCRI3X3AxmqDPZ9P5k6gG3JSM7uFy2qcz8",
-        authDomain: "english-game-f4ef9.firebaseapp.com",
-        projectId: "english-game-f4ef9",
-        storageBucket: "english-game-f4ef9.firebasestorage.app",
-        messagingSenderId: "994295847412",
-        appId: "1:994295847412:web:6c5b712fc02c5b8ed3c1a1"
-    };
-    if (!firebaseConfig && MY_FIREBASE_CONFIG.projectId) firebaseConfig = MY_FIREBASE_CONFIG;
-
-    let db = null;
-    if (firebaseConfig) {
-        try {
-            const appInstance = initializeApp(firebaseConfig);
-            db = getFirestore(appInstance);
-        } catch (e) {}
-    }
-
-    const QUIZ_PACKS = [
-        {
-            id: 'school',
-            title: 'School & Classroom Objects',
-            iconClass: 'fa-solid fa-school',
-            desc: 'School supplies and classroom items',
-            questions: [
-                { text: "What is this?", emoji: "✏️", options: ["Ruler", "Pencil", "Book", "Bag"], correct: 1 },
-                { text: "What is this?", emoji: "📏", options: ["Ruler", "Pen", "Scissors", "Eraser"], correct: 0 },
-                { text: "What is this?", emoji: "🎒", options: ["Desk", "Clock", "School bag", "Computer"], correct: 2 },
-                { text: "What is this?", emoji: "✂️", options: ["Glue", "Scissors", "Paper", "Pencil"], correct: 1 },
-                { text: "What are these?", emoji: "📚", options: ["Chairs", "Bags", "Clocks", "Books"], correct: 3 },
-                { text: "What is this?", emoji: "💻", options: ["Computer", "Television", "Telephone", "Radio"], correct: 0 },
-                { text: "What is this?", emoji: "🪑", options: ["Table", "Door", "Chair", "Window"], correct: 2 },
-                { text: "Who is this?", emoji: "👩‍🏫", options: ["Student", "Teacher", "Doctor", "Driver"], correct: 1 },
-                { text: "What is this?", emoji: "🕒", options: ["Map", "Globe", "Board", "Clock"], correct: 3 },
-                { text: "What is this?", emoji: "🌍", options: ["Globe", "Ball", "Clock", "Bag"], correct: 0 }
-            ]
-        },
-        {
-            id: 'animals',
-            title: 'Animals World',
-            iconClass: 'fa-solid fa-paw',
-            desc: 'Cute animal vocabulary',
-            questions: [
-                { text: "What is this animal?", emoji: "🐶", options: ["Cat", "Dog", "Bird", "Fish"], correct: 1 },
-                { text: "What is this animal?", emoji: "🐱", options: ["Cat", "Dog", "Horse", "Rabbit"], correct: 0 },
-                { text: "What is this animal?", emoji: "🐦", options: ["Frog", "Bee", "Bird", "Cow"], correct: 2 },
-                { text: "What is this animal?", emoji: "🐟", options: ["Bird", "Fish", "Lion", "Bear"], correct: 1 },
-                { text: "What is this animal?", emoji: "🦁", options: ["Elephant", "Monkey", "Horse", "Lion"], correct: 3 },
-                { text: "What is this animal?", emoji: "🐸", options: ["Frog", "Duck", "Cat", "Mouse"], correct: 0 },
-                { text: "What is this animal?", emoji: "🐻", options: ["Dog", "Cow", "Bear", "Sheep"], correct: 2 },
-                { text: "What is this animal?", emoji: "🐴", options: ["Horse", "Rabbit", "Cat", "Bird"], correct: 0 },
-                { text: "What is this insect?", emoji: "🐝", options: ["Ant", "Butterfly", "Bee", "Spider"], correct: 2 },
-                { text: "What is this animal?", emoji: "🐰", options: ["Mouse", "Rabbit", "Dog", "Fish"], correct: 1 }
-            ]
-        },
-        {
-            id: 'food',
-            title: 'Fruits & Food',
-            iconClass: 'fa-solid fa-apple-whole',
-            desc: 'Delicious food and drinks',
-            questions: [
-                { text: "What is this fruit?", emoji: "🍎", options: ["Banana", "Grape", "Orange", "Apple"], correct: 3 },
-                { text: "What is this fruit?", emoji: "🍌", options: ["Banana", "Lemon", "Apple", "Cherry"], correct: 0 },
-                { text: "What is this food?", emoji: "🍕", options: ["Bread", "Pizza", "Cheese", "Cake"], correct: 1 },
-                { text: "What is this drink?", emoji: "🥛", options: ["Water", "Tea", "Milk", "Juice"], correct: 2 },
-                { text: "What is this food?", emoji: "🍞", options: ["Egg", "Cake", "Rice", "Bread"], correct: 3 },
-                { text: "What is this?", emoji: "🍦", options: ["Ice cream", "Cake", "Soup", "Pasta"], correct: 0 },
-                { text: "What is this fruit?", emoji: "🍋", options: ["Apple", "Lemon", "Banana", "Pear"], correct: 1 },
-                { text: "What is this food?", emoji: "🍔", options: ["Pizza", "Salad", "Hamburger", "Sandwich"], correct: 2 },
-                { text: "What is this food?", emoji: "🥚", options: ["Egg", "Cheese", "Bread", "Apple"], correct: 0 },
-                { text: "What are these?", emoji: "🍇", options: ["Cherries", "Strawberries", "Lemons", "Grapes"], correct: 3 }
-            ]
-        },
-        {
-            id: 'house',
-            title: 'House & Family',
-            iconClass: 'fa-solid fa-house-user',
-            desc: 'Rooms, house items, and family members',
-            questions: [
-                { text: "What is this?", emoji: "🏠", options: ["School", "House", "Park", "Shop"], correct: 1 },
-                { text: "What is this?", emoji: "🛏️", options: ["Bed", "Sofa", "Table", "Chair"], correct: 0 },
-                { text: "What is this?", emoji: "🛋️", options: ["Bed", "Desk", "Sofa", "Lamp"], correct: 2 },
-                { text: "What is this?", emoji: "📺", options: ["Computer", "Television", "Clock", "Telephone"], correct: 1 },
-                { text: "What is this?", emoji: "🚪", options: ["Window", "Wall", "Door", "Floor"], correct: 2 },
-                { text: "What is this?", emoji: "🪟", options: ["Window", "Door", "Table", "Bed"], correct: 0 },
-                { text: "What is this?", emoji: "🚿", options: ["Bed", "Sink", "Shower", "Mirror"], correct: 2 },
-                { text: "What is this?", emoji: "💡", options: ["Lamp", "Clock", "Phone", "Book"], correct: 0 },
-                { text: "What is this?", emoji: "🛁", options: ["Bath", "Bed", "Chair", "Door"], correct: 0 },
-                { text: "Who are they?", emoji: "👨‍👩‍👧‍👦", options: ["Teachers", "Students", "Friends", "Family"], correct: 3 }
-            ]
-        },
-        {
-            id: 'hobbies',
-            title: 'Hobbies & Games',
-            iconClass: 'fa-solid fa-gamepad',
-            desc: 'Sports, games, and fun hobbies',
-            questions: [
-                { text: "What sport is this?", emoji: "⚽", options: ["Basketball", "Football", "Tennis", "Swimming"], correct: 1 },
-                { text: "What sport is this?", emoji: "🏀", options: ["Football", "Volleyball", "Basketball", "Tennis"], correct: 2 },
-                { text: "What instrument is this?", emoji: "🎸", options: ["Piano", "Drum", "Violin", "Guitar"], correct: 3 },
-                { text: "What instrument is this?", emoji: "🎹", options: ["Piano", "Guitar", "Drum", "Flute"], correct: 0 },
-                { text: "What is this hobby?", emoji: "🚴", options: ["Swimming", "Riding a bike", "Running", "Skating"], correct: 1 },
-                { text: "What is this sport?", emoji: "🏊", options: ["Swimming", "Running", "Dancing", "Cycling"], correct: 0 },
-                { text: "What is this hobby?", emoji: "🎨", options: ["Singing", "Reading", "Painting", "Cooking"], correct: 2 },
-                { text: "What is this hobby?", emoji: "🎮", options: ["Playing video games", "Reading", "Cooking", "Painting"], correct: 0 },
-                { text: "What is this game?", emoji: "♟️", options: ["Chess", "Football", "Cards", "Puzzle"], correct: 0 },
-                { text: "What is this?", emoji: "🏕️", options: ["Swimming", "Camping", "Running", "Cooking"], correct: 1 }
-            ]
-        }
-    ];
-
-    const AVATARS = [
-        { id: 'dog', icon: 'fa-solid fa-dog', color: 'bg-amber-400', name: 'Dog' },
-        { id: 'cat', icon: 'fa-solid fa-cat', color: 'bg-orange-400', name: 'Cat' },
-        { id: 'crow', icon: 'fa-solid fa-crow', color: 'bg-sky-400', name: 'Bird' },
-        { id: 'frog', icon: 'fa-solid fa-frog', color: 'bg-emerald-400', name: 'Frog' },
-        { id: 'fish', icon: 'fa-solid fa-fish-fins', color: 'bg-blue-400', name: 'Fish' },
-        { id: 'dragon', icon: 'fa-solid fa-dragon', color: 'bg-rose-400', name: 'Dragon' },
-        { id: 'hippo', icon: 'fa-solid fa-hippo', color: 'bg-purple-400', name: 'Hippo' },
-        { id: 'otter', icon: 'fa-solid fa-otter', color: 'bg-teal-400', name: 'Otter' }
-    ];
-
-    class SoundFX {
-        constructor() {
-            this.muted = false;
-            try {
-                const AudioCtx = window.AudioContext || window.webkitAudioContext;
-                this.ctx = new AudioCtx();
-            } catch(e) {
-                this.ctx = null;
-            }
-        }
-
-        playTone(freq, type, duration, delay=0) {
-            if (this.muted || !this.ctx) return;
-            setTimeout(() => {
-                try {
-                    if (this.ctx.state === 'suspended') {
-                        this.ctx.resume();
-                    }
-                    const osc = this.ctx.createOscillator();
-                    const gain = this.ctx.createGain();
-                    osc.type = type;
-                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
-                    osc.start();
-                    osc.stop(this.ctx.currentTime + duration);
-                } catch(e) {}
-            }, delay);
-        }
-
-        playCorrect() {
-            this.playTone(523.25, 'triangle', 0.15, 0);
-            this.playTone(659.25, 'triangle', 0.15, 100);
-            this.playTone(783.99, 'triangle', 0.3, 200);
-        }
-
-        playWrong() {
-            this.playTone(220, 'sawtooth', 0.2, 0);
-            this.playTone(185, 'sawtooth', 0.3, 150);
-        }
-
-        playTick() {
-            this.playTone(440, 'sine', 0.05, 0);
-        }
-
-        playFanfare() {
-            this.playTone(523.25, 'triangle', 0.2, 0);
-            this.playTone(659.25, 'triangle', 0.2, 200);
-            this.playTone(783.99, 'triangle', 0.2, 400);
-            this.playTone(1046.50, 'triangle', 0.6, 600);
-        }
-    }
-
-    const sfx = new SoundFX();
-
-    class SafariApp {
-        constructor() {
-            this.role = 'student';
-            this.isTeacherAuthenticated = false;
-            this.roomId = ROOM_ID;
-            this.roomData = null;
-            this.playerId = 'player_' + Math.random().toString(36).substring(2, 9);
-            this.playerName = '';
-            this.playerAvatar = AVATARS[0];
-            this.selectedQuizPack = QUIZ_PACKS[0];
-            this.playerCurrentQuestionIndex = 0;
-            this.playerScore = 0;
-            this.playerCorrectCount = 0;
-            this.playerWrongCount = 0;
-            this.questionTimer = null;
-            this.hasAnsweredCurrent = false;
-            this.unsubscribeFirestore = null;
-            this.unsubscribePlayers = null;
-            this.cloudPlayers = {};
-            this.lastBotTick = 0;
-
-            this.loadSavedCustomPacks();
-            this.renderAvatarSelector();
-            this.renderTeacherQuizPacks();
-        }
-
-        toggleTheme() {
-            const htmlEl = document.documentElement;
-            const isDark = htmlEl.classList.toggle('dark');
-            const themeIcon = document.getElementById('themeIcon');
-            if (isDark) {
-                themeIcon.className = 'fa-solid fa-sun text-lg text-amber-300';
-            } else {
-                themeIcon.className = 'fa-solid fa-moon text-lg text-slate-700';
-            }
-        }
-
-        handleBrandClick() {
-            if (this.role === 'host' || this.isTeacherAuthenticated) {
-                this.showTeacherSetup();
-            } else {
-                this.showPlayerSetup();
-            }
-        }
-
-        loadSavedCustomPacks() {
-            try {
-                const saved = localStorage.getItem('word_adventure_custom_packs_v3');
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        parsed.forEach(sp => {
-                            const target = QUIZ_PACKS.find(q => q.id === sp.id);
-                            if (target) target.questions = sp.questions;
-                        });
-                    }
-                }
-            } catch(e) {}
-        }
-
-        openQuestionEditorModal() {
-            const select = document.getElementById('editorPackSelect');
-            select.innerHTML = QUIZ_PACKS.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
-            select.value = this.selectedQuizPack.id;
-            this.renderEditorQuestions(this.selectedQuizPack.id);
-            document.getElementById('questionEditorModal').classList.remove('hidden');
-        }
-
-        closeQuestionEditorModal() {
-            document.getElementById('questionEditorModal').classList.add('hidden');
-        }
-
-        switchEditorPack(packId) {
-            this.renderEditorQuestions(packId);
-        }
-
-        renderEditorQuestions(packId) {
-            const pack = QUIZ_PACKS.find(p => p.id === packId);
-            if (!pack) return;
-
-            const container = document.getElementById('editorQuestionsList');
-            container.innerHTML = pack.questions.map((q, idx) => `
-                <div class="bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 rounded-2xl p-4 space-y-3" id="edit_q_${packId}_${idx}">
-                    <div class="flex justify-between items-center">
-                        <span class="font-black text-xs bg-sky-200 text-sky-900 px-2.5 py-1 rounded-lg">Question #${idx + 1}</span>
-                        <span class="text-xs text-slate-500 dark:text-slate-400 font-bold">Edit text, image URL & options</span>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-slate-700 dark:text-slate-300 mb-1">Question Text</label>
-                        <input type="text" id="eq_text_${packId}_${idx}" value="${q.text}" class="w-full p-2 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-bold text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-slate-700 dark:text-slate-300 mb-1">Emoji picture (shown big; leave empty to use an image URL)</label>
-                        <input type="text" id="eq_emoji_${packId}_${idx}" value="${q.emoji || ''}" class="w-full p-2 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-bold text-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-slate-700 dark:text-slate-300 mb-1">Image URL (optional)</label>
-                        <input type="text" id="eq_img_${packId}_${idx}" value="${q.imageUrl || ''}" class="w-full p-2 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-bold text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
-                    </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        ${[0, 1, 2, 3].map(optIdx => `
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 mb-0.5">Option ${String.fromCharCode(65 + optIdx)} ${optIdx === q.correct ? '⭐ (Correct)' : ''}</label>
-                                <input type="text" id="eq_opt_${packId}_${idx}_${optIdx}" value="${q.options[optIdx] || ''}" class="w-full p-1.5 border-2 border-slate-300 dark:border-slate-700 rounded-lg font-bold text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-black text-emerald-700 dark:text-emerald-400 mb-1">Correct Answer (0 = A, 1 = B, 2 = C, 3 = D)</label>
-                        <select id="eq_correct_${packId}_${idx}" class="p-2 border-2 border-emerald-500 rounded-xl font-black text-xs bg-emerald-50 dark:bg-emerald-950 text-emerald-900 dark:text-emerald-200">
-                            <option value="0" ${q.correct === 0 ? 'selected' : ''}>A - ${q.options[0]}</option>
-                            <option value="1" ${q.correct === 1 ? 'selected' : ''}>B - ${q.options[1]}</option>
-                            <option value="2" ${q.correct === 2 ? 'selected' : ''}>C - ${q.options[2]}</option>
-                            <option value="3" ${q.correct === 3 ? 'selected' : ''}>D - ${q.options[3]}</option>
-                        </select>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        saveCustomQuestions() {
-            const packId = document.getElementById('editorPackSelect').value;
-            const pack = QUIZ_PACKS.find(p => p.id === packId);
-            if (!pack) return;
-
-            pack.questions.forEach((q, idx) => {
-                const textEl = document.getElementById(`eq_text_${packId}_${idx}`);
-                const imgEl = document.getElementById(`eq_img_${packId}_${idx}`);
-                const correctEl = document.getElementById(`eq_correct_${packId}_${idx}`);
-
-                if (textEl) q.text = textEl.value.trim();
-                if (imgEl) q.imageUrl = imgEl.value.trim();
-                const emojiEl = document.getElementById(`eq_emoji_${packId}_${idx}`);
-                if (emojiEl) q.emoji = emojiEl.value.trim();
-                if (correctEl) q.correct = parseInt(correctEl.value);
-
-                for (let i = 0; i < 4; i++) {
-                    const optEl = document.getElementById(`eq_opt_${packId}_${idx}_${i}`);
-                    if (optEl) q.options[i] = optEl.value.trim();
-                }
-            });
-
-            try {
-                localStorage.setItem('word_adventure_custom_packs_v3', JSON.stringify(QUIZ_PACKS.map(p => ({ id: p.id, questions: p.questions }))));
-            } catch(e) {}
-
-            this.renderTeacherQuizPacks();
-            this.closeQuestionEditorModal();
-        }
-
-        showView(viewId) {
-            ['viewPlayerSetup', 'viewTeacherSetup', 'viewLobby', 'viewQuestion', 'viewTeacherScoreboard', 'viewGameOver'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.classList.add('hidden');
-            });
-            const target = document.getElementById(viewId);
-            if (target) target.classList.remove('hidden');
-        }
-
-        showPlayerSetup() {
-            this.role = 'student';
-            this.showView('viewPlayerSetup');
-            if (this.unsubscribeFirestore) {
-                this.unsubscribeFirestore();
-                this.unsubscribeFirestore = null;
-            }
-        }
-
-        openTeacherAuthModal() {
-            document.getElementById('teacherAuthModal').classList.remove('hidden');
-            document.getElementById('teacherPasswordInput').value = '';
-            document.getElementById('passwordErrorText').classList.add('hidden');
-        }
-
-        closeTeacherAuthModal() {
-            document.getElementById('teacherAuthModal').classList.add('hidden');
-        }
-
-        verifyTeacherPassword(e) {
-            e.preventDefault();
-            const pass = document.getElementById('teacherPasswordInput').value.trim().toLowerCase();
-            if (pass === 'husuveilko') {
-                this.isTeacherAuthenticated = true;
-                this.closeTeacherAuthModal();
-                this.showTeacherSetup();
-            } else {
-                document.getElementById('passwordErrorText').classList.remove('hidden');
-                sfx.playWrong();
-            }
-        }
-
-        showTeacherSetup() {
-            this.role = 'host';
-            this.isTeacherAuthenticated = true;
-            this.showView('viewTeacherSetup');
-            if (this.unsubscribeFirestore) {
-                this.unsubscribeFirestore();
-                this.unsubscribeFirestore = null;
-            }
-        }
-
-        renderAvatarSelector() {
-            const container = document.getElementById('avatarSelector');
-            container.innerHTML = AVATARS.map(a => `
-                <button type="button" id="avatar_${a.id}" onclick="app.selectAvatar('${a.id}')" 
-                        class="cartoon-btn p-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-amber-50 dark:hover:bg-slate-700">
-                    <div class="w-10 h-10 rounded-xl ${a.color} text-slate-900 border-2 border-slate-800 flex items-center justify-center text-xl shadow-sm">
-                        <i class="${a.icon}"></i>
-                    </div>
-                    <span class="text-[11px] font-black text-slate-700 dark:text-slate-300">${a.name}</span>
-                </button>
-            `).join('');
-            this.updateAvatarSelectionUI(AVATARS[0].id);
-        }
-
-        selectAvatar(id) {
-            const found = AVATARS.find(a => a.id === id);
-            if (found) {
-                this.playerAvatar = found;
-                this.updateAvatarSelectionUI(id);
-            }
-        }
-
-        updateAvatarSelectionUI(selectedId) {
-            AVATARS.forEach(a => {
-                const btn = document.getElementById(`avatar_${a.id}`);
-                if (btn) {
-                    if (a.id === selectedId) {
-                        btn.classList.add('bg-banana-light', 'border-slate-800', 'ring-2', 'ring-banana-dark');
-                        btn.classList.remove('bg-slate-50', 'dark:bg-slate-800', 'border-slate-300', 'dark:border-slate-700');
-                    } else {
-                        btn.classList.remove('bg-banana-light', 'border-slate-800', 'ring-2', 'ring-banana-dark');
-                        btn.classList.add('bg-slate-50', 'dark:bg-slate-800', 'border-slate-300', 'dark:border-slate-700');
-                    }
-                }
-            });
-
-            const customBtn = document.getElementById('customAvatarBtn');
-            if (selectedId === 'custom') {
-                customBtn.classList.add('bg-emerald-200', 'border-emerald-600', 'text-emerald-900');
-                customBtn.classList.remove('bg-sky-100', 'text-sky-900');
-                document.getElementById('customAvatarBtnText').innerHTML = 'Photo Selected <i class="fa-solid fa-circle-check text-emerald-600 ml-1"></i> (Change)';
-            } else {
-                customBtn.classList.remove('bg-emerald-200', 'border-emerald-600', 'text-emerald-900');
-                customBtn.classList.add('bg-sky-100', 'text-sky-900');
-                document.getElementById('customAvatarBtnText').innerHTML = 'Upload Photo from Gallery <i class="fa-solid fa-image ml-1"></i>';
-            }
-        }
-
-        handleCustomPhotoUpload(e) {
-            const file = e.target.files?.[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const maxDim = 120;
-                    let w = img.width, h = img.height;
-                    if (w > h) {
-                        if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
-                    } else {
-                        if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
-                    }
-                    canvas.width = w;
-                    canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, w, h);
-                    const base64Data = canvas.toDataURL('image/jpeg', 0.8);
-                    this.playerAvatar = { id: 'custom', photo: base64Data, name: 'My Photo' };
-                    this.updateAvatarSelectionUI('custom');
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        renderAvatarDisplay(avatarObj, sizeClass = "w-8 h-8 text-2xl") {
-            if (avatarObj?.photo) {
-                return `<img src="${avatarObj.photo}" alt="Avatar" class="${sizeClass} rounded-full object-cover border-2 border-slate-800 shadow-sm inline-block shrink-0" />`;
-            }
-            if (avatarObj?.icon) {
-                const bgColor = avatarObj.color || 'bg-banana';
-                return `<div class="${sizeClass} rounded-xl ${bgColor} text-slate-900 border-2 border-slate-800 flex items-center justify-center shrink-0 shadow-sm"><i class="${avatarObj.icon}"></i></div>`;
-            }
-            return `<div class="${sizeClass} rounded-xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center shrink-0"><i class="fa-solid fa-user"></i></div>`;
-        }
-
-        renderTeacherQuizPacks() {
-            const container = document.getElementById('quizPackList');
-            container.innerHTML = QUIZ_PACKS.map(pack => `
-                <div onclick="app.selectQuizPack('${pack.id}')" id="packCard_${pack.id}"
-                     class="cartoon-card p-4 cursor-pointer flex items-center gap-3 bg-white dark:bg-slate-900 hover:bg-sky-50 dark:hover:bg-slate-800 transition-all ${pack.id === this.selectedQuizPack.id ? 'border-sky-500 ring-2 ring-sky-300' : ''}">
-                    <div class="w-12 h-12 rounded-2xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center text-xl shrink-0">
-                        <i class="${pack.iconClass}"></i>
-                    </div>
-                    <div class="flex-grow">
-                        <h5 class="font-black text-slate-800 dark:text-white text-base">${pack.title}</h5>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 font-bold">${pack.questions.length} Questions &bull; ${pack.desc}</p>
-                    </div>
-                </div>
-            `).join('');
-            this.renderQuizPreview();
-        }
-
-        selectQuizPack(packId) {
-            const found = QUIZ_PACKS.find(p => p.id === packId);
-            if (found) {
-                this.selectedQuizPack = found;
-                this.renderTeacherQuizPacks();
-                if (this.roomData) {
-                    this.roomData.quizPack = found;
-                    this.syncRoomToCloud();
-                }
-            }
-        }
-
-        renderQuizPreview() {
-            document.getElementById('selectedQuizCount').innerText = this.selectedQuizPack.questions.length;
-            const list = document.getElementById('quizPreviewList');
-            list.innerHTML = this.selectedQuizPack.questions.map((q, idx) => `
-                <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
-                    <div class="flex items-center gap-2 truncate">
-                        <span class="w-6 h-6 rounded-lg bg-sky-100 dark:bg-sky-900 text-sky-800 dark:text-sky-200 border border-slate-300 dark:border-slate-700 flex items-center justify-center shrink-0 font-black">${idx + 1}</span>
-                        <span class="truncate">${q.text}</span>
-                    </div>
-                    <span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-2 py-0.5 rounded-md shrink-0 ml-2">Correct: ${q.options[q.correct]}</span>
-                </div>
-            `).join('');
-        }
-
-        async createNewRoom() {
-            this.role = 'host';
-            this.roomId = ROOM_ID;
-            this.roomData = {
-                state: 'lobby',
-                quizPack: this.selectedQuizPack,
-                players: {}
-            };
-            this.cloudPlayers = this.roomData.players;
-
-            await this.syncRoomToCloud(true);
-            this.setupLobbyUI();
-            this.listenToRoomCloud();
-        }
-
-        async syncRoomToCloud(isNew = false, playerIds = []) {
-            if (!this.roomId) return;
-            try {
-                if (db) {
-                    const roomRef = doc(db, 'rooms', this.roomId);
-                    const roomOnly = {};
-                    Object.keys(this.roomData).forEach(k => { if (k !== 'players') roomOnly[k] = this.roomData[k]; });
-
-                    if (isNew) {
-                        try {
-                            const snap = await getDocs(collection(db, 'rooms', this.roomId, 'players'));
-                            await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
-                        } catch(e) { console.error("Old players cleanup:", e); }
-                        await setDoc(roomRef, roomOnly);
-                    } else if (this.role === 'host') {
-                        await updateDoc(roomRef, roomOnly);
-                    }
-
-                    await Promise.all((playerIds || []).map(id => {
-                        const pl = this.roomData.players && this.roomData.players[id];
-                        return pl ? setDoc(doc(db, 'rooms', this.roomId, 'players', id), pl) : null;
-                    }));
-                }
-            } catch(e) {
-                console.error("Cloud sync fallback:", e);
-            }
-            try {
-                localStorage.setItem(`word_adventure_room_${this.roomId}`, JSON.stringify(this.roomData));
-            } catch(e) {}
-        }
-
-        listenToRoomCloud() {
-            if (!this.roomId) return;
-            if (this.unsubscribeFirestore) this.unsubscribeFirestore();
-            if (this.unsubscribePlayers) this.unsubscribePlayers();
-
-            if (db) {
-                try {
-                    const roomRef = doc(db, 'rooms', this.roomId);
-                    this.unsubscribeFirestore = onSnapshot(roomRef, (docSnap) => {
-                        if (docSnap.exists()) {
-                            const d = docSnap.data();
-                            d.players = this.cloudPlayers || {};
-                            this.roomData = d;
-                            this.handleRoomStateChange();
-                        }
-                    }, (error) => {
-                        console.error("Firestore listener error:", error);
-                    });
-
-                    this.unsubscribePlayers = onSnapshot(collection(db, 'rooms', this.roomId, 'players'), (snap) => {
-                        const map = {};
-                        snap.forEach(d => { map[d.id] = d.data(); });
-                        this.cloudPlayers = map;
-                        if (this.roomData) {
-                            this.roomData.players = map;
-                            this.handleRoomStateChange();
-                        }
-                    }, (error) => {
-                        console.error("Players listener error:", error);
-                    });
-                } catch(e) {}
-            }
-
-            if (db) return;
-            this.storageInterval = setInterval(() => {
-                try {
-                    const raw = localStorage.getItem(`word_adventure_room_${this.roomId}`);
-                    if (raw) {
-                        const parsed = JSON.parse(raw);
-                        if (parsed && JSON.stringify(parsed) !== JSON.stringify(this.roomData)) {
-                            this.roomData = parsed;
-                            this.handleRoomStateChange();
-                        }
-                    }
-                } catch(e) {}
-            }, 800);
-        }
-
-        async joinRoomAsPlayer(e) {
-            e.preventDefault();
-            const name = document.getElementById('playerNameInput').value.trim();
-            if (!name) return;
-
-            this.roomId = ROOM_ID;
-            this.playerName = name;
-            this.role = 'student';
-
-            let foundRoom = null;
-            if (db) {
-                try {
-                    const roomRef = doc(db, 'rooms', this.roomId);
-                    const docSnap = await getDoc(roomRef);
-                    if (docSnap.exists()) {
-                        foundRoom = docSnap.data();
-                    }
-                } catch(e) {}
-            }
-
-            if (!foundRoom) {
-                try {
-                    const localRaw = localStorage.getItem(`word_adventure_room_${this.roomId}`);
-                    if (localRaw) {
-                        foundRoom = JSON.parse(localRaw);
-                    }
-                } catch(e) {}
-            }
-
-            if (!foundRoom) {
-                alert("There is no active room yet. Please ask your teacher to create the room, then try again.");
-                return;
-            }
-
-            this.roomData = foundRoom;
-            this.cloudPlayers = this.roomData.players || {};
-            this.roomData.players = this.cloudPlayers;
-
-            this.roomData.players[this.playerId] = {
-                id: this.playerId,
-                name: this.playerName,
-                avatar: this.playerAvatar,
-                score: 0,
-                correct: 0,
-                wrong: 0,
-                questionIndex: 0
-            };
-
-            await this.syncRoomToCloud(false, [this.playerId]);
-            this.setupLobbyUI();
-            this.listenToRoomCloud();
-        }
-
-        updateLobbyPlayersGrid() {
-            if (!this.roomData) return;
-            const players = Object.values(this.roomData.players || {});
-            const badge = document.getElementById('playerCountBadge');
-            if (badge) badge.innerText = players.length;
-
-            const grid = document.getElementById('lobbyPlayersGrid');
-            if (players.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-slate-400 dark:text-slate-500 font-bold my-auto">No players joined yet...</div>`;
-                return;
-            }
-
-            grid.innerHTML = players.map(p => `
-                <div class="cartoon-card bg-white dark:bg-slate-900 p-3 flex flex-col items-center justify-center">
-                    ${this.renderAvatarDisplay(p.avatar, 'w-10 h-10 text-xl')}
-                    <span class="text-xs font-black text-slate-800 dark:text-white truncate w-full text-center mt-1">${p.name}</span>
-                </div>
-            `).join('');
-        }
-
-        setupLobbyUI() {
-            document.getElementById('cloudStatusBadge').classList.remove('hidden');
-
-            let savedUrl = '';
-            try { savedUrl = localStorage.getItem('ewwGameUrl') || ''; } catch(e) {}
-            const defaultUrl = `${window.location.origin}${window.location.pathname}`;
-            const shareUrl = savedUrl || defaultUrl;
-            const linkInput = document.getElementById('shareableLinkInput');
-            if (linkInput) linkInput.value = shareUrl;
-            this.renderQr(shareUrl);
-
-            if (this.role === 'host') {
-                document.getElementById('hostLobbyControls').classList.remove('hidden');
-                document.getElementById('playerLobbyNotice').classList.add('hidden');
-                const backBtnContainer = document.getElementById('hostBackToPanelBtnContainer');
-                if (backBtnContainer) backBtnContainer.classList.remove('hidden');
-            } else {
-                document.getElementById('hostLobbyControls').classList.add('hidden');
-                document.getElementById('playerLobbyNotice').classList.remove('hidden');
-                const backBtnContainer = document.getElementById('hostBackToPanelBtnContainer');
-                if (backBtnContainer) backBtnContainer.classList.add('hidden');
-            }
-
-            this.showView('viewLobby');
-            this.updateLobbyPlayersGrid();
-        }
-
-        renderQr(url) {
-            const qrContainer = document.getElementById('qrcode');
-            const warn = document.getElementById('shareLinkWarning');
-            if (warn) warn.classList.toggle('hidden', !/^(file:|about:|blob:)/i.test(url));
-            if (!qrContainer) return;
-            qrContainer.innerHTML = '';
-            if (!url) return;
-            try {
-                new QRCode(qrContainer, {
-                    text: url,
-                    width: 140,
-                    height: 140,
-                    colorDark: "#1E293B",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.M
-                });
-            } catch(e) {}
-        }
-
-        onShareLinkEdited() {
-            const url = document.getElementById('shareableLinkInput').value.trim();
-            try { localStorage.setItem('ewwGameUrl', url); } catch(e) {}
-            this.renderQr(url);
-        }
-
-        copyShareableLink() {
-            const input = document.getElementById('shareableLinkInput');
-            if (!input) return;
-            input.select();
-            input.setSelectionRange(0, 99999);
-            try {
-                document.execCommand('copy');
-                alert("Join link copied to clipboard!");
-            } catch(e) {
-                navigator.clipboard.writeText(input.value);
-                alert("Join link copied to clipboard!");
-            }
-        }
-
-        addBotPlayer() {
-            const botNames = ["Alex 🐶", "Emma 🐱", "Leo 🐸", "Sophia 🐦", "Max 🐟"];
-            const randomName = botNames[Math.floor(Math.random() * botNames.length)] + " (Bot)";
-            const botId = 'bot_' + Math.random().toString(36).substring(2, 7);
-            const randomAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
-
-            const botData = {
-                id: botId,
-                name: randomName,
-                avatar: randomAvatar,
-                score: 0,
-                correct: 0,
-                wrong: 0,
-                questionIndex: 0
-            };
-
-            if (!this.roomData.players) this.roomData.players = {};
-            this.roomData.players[botId] = botData;
-            this.syncRoomToCloud(false, [botId]);
-            this.updateLobbyPlayersGrid();
-        }
-
-        handleRoomStateChange() {
-            if (!this.roomData) return;
             
-            const lobbyView = document.getElementById('viewLobby');
-            if (lobbyView && !lobbyView.classList.contains('hidden')) {
+            <div class="w-16 h-16 mx-auto bg-amber-100 border-2 border-slate-800 dark:border-slate-700 rounded-2xl flex items-center justify-center text-3xl text-amber-600 mb-3">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-1">Teacher Login</h3>
+            <p class="text-slate-500 dark:text-slate-400 text-xs font-bold mb-5">Enter password to access teacher control panel.</p>
+
+            <form onsubmit="app.verifyTeacherPassword(event)" class="space-y-4">
+                <div>
+                    <input type="password" id="teacherPasswordInput" required placeholder="Password..." 
+                           class="w-full text-center text-xl font-black p-3 border-3 border-slate-800 dark:border-slate-700 rounded-2xl bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:outline-none focus:ring-4 focus:ring-sky-light">
+                    <p id="passwordErrorText" class="text-rose-500 text-xs font-black mt-2 hidden">⚠️ Incorrect password! Please try again.</p>
+                </div>
+
+                <div class="flex gap-2">
+                    <button type="button" onclick="app.closeTeacherAuthModal()" class="cartoon-btn w-1/3 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-3 font-bold text-sm">
+                        Cancel
+                    </button>
+                    <button type="submit" class="cartoon-btn w-2/3 bg-sky-500 hover:bg-sky-600 text-white py-3 font-black text-base flex items-center justify-center gap-1.5">
+                        <span>Login</span>
+                        <i class="fa-solid fa-key"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="w-full text-center py-3 text-slate-500 dark:text-slate-400 font-bold text-xs border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60">
+        English with Words &bull; Designed for 5th Grade English Learners <i class="fa-solid fa-castle text-pink-400 ml-1"></i>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        let appId = 'word-adventure-default';
+        try {
+            if (typeof __app_id !== 'undefined') appId = __app_id;
+        } catch (e) {}
+
+        let firebaseConfig = null;
+        try {
+            if (typeof __firebase_config !== 'undefined') {
+                firebaseConfig = JSON.parse(__firebase_config);
+            }
+        } catch (e) {}
+
+        const ROOM_ID = 'main';
+
+        const MY_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyCRI3X3AxmqDPZ9P5k6gG3JSM7uFy2qcz8",
+            authDomain: "english-game-f4ef9.firebaseapp.com",
+            projectId: "english-game-f4ef9",
+            storageBucket: "english-game-f4ef9.firebasestorage.app",
+            messagingSenderId: "994295847412",
+            appId: "1:994295847412:web:6c5b712fc02c5b8ed3c1a1"
+        };
+        if (!firebaseConfig && MY_FIREBASE_CONFIG.projectId) firebaseConfig = MY_FIREBASE_CONFIG;
+
+        let db = null;
+        if (firebaseConfig) {
+            try {
+                const appInstance = initializeApp(firebaseConfig);
+                db = getFirestore(appInstance);
+            } catch (e) {}
+        }
+
+        const QUIZ_PACKS = [
+            {
+                id: 'school',
+                title: 'School & Classroom Objects',
+                iconClass: 'fa-solid fa-school',
+                desc: 'School supplies and classroom items',
+                questions: [
+                    { text: "What is this?", emoji: "✏️", options: ["Ruler", "Pencil", "Book", "Bag"], correct: 1 },
+                    { text: "What is this?", emoji: "📏", options: ["Ruler", "Pen", "Scissors", "Eraser"], correct: 0 },
+                    { text: "What is this?", emoji: "🎒", options: ["Desk", "Clock", "School bag", "Computer"], correct: 2 },
+                    { text: "What is this?", emoji: "✂️", options: ["Glue", "Scissors", "Paper", "Pencil"], correct: 1 },
+                    { text: "What are these?", emoji: "📚", options: ["Chairs", "Bags", "Clocks", "Books"], correct: 3 },
+                    { text: "What is this?", emoji: "💻", options: ["Computer", "Television", "Telephone", "Radio"], correct: 0 },
+                    { text: "What is this?", emoji: "🪑", options: ["Table", "Door", "Chair", "Window"], correct: 2 },
+                    { text: "Who is this?", emoji: "👩‍🏫", options: ["Student", "Teacher", "Doctor", "Driver"], correct: 1 },
+                    { text: "What is this?", emoji: "🕒", options: ["Map", "Globe", "Board", "Clock"], correct: 3 },
+                    { text: "What is this?", emoji: "🌍", options: ["Globe", "Ball", "Clock", "Bag"], correct: 0 }
+                ]
+            },
+            {
+                id: 'animals',
+                title: 'Animals World',
+                iconClass: 'fa-solid fa-paw',
+                desc: 'Cute animal vocabulary',
+                questions: [
+                    { text: "What is this animal?", emoji: "🐶", options: ["Cat", "Dog", "Bird", "Fish"], correct: 1 },
+                    { text: "What is this animal?", emoji: "🐱", options: ["Cat", "Dog", "Horse", "Rabbit"], correct: 0 },
+                    { text: "What is this animal?", emoji: "🐦", options: ["Frog", "Bee", "Bird", "Cow"], correct: 2 },
+                    { text: "What is this animal?", emoji: "🐟", options: ["Bird", "Fish", "Lion", "Bear"], correct: 1 },
+                    { text: "What is this animal?", emoji: "🦁", options: ["Elephant", "Monkey", "Horse", "Lion"], correct: 3 },
+                    { text: "What is this animal?", emoji: "🐸", options: ["Frog", "Duck", "Cat", "Mouse"], correct: 0 },
+                    { text: "What is this animal?", emoji: "🐻", options: ["Dog", "Cow", "Bear", "Sheep"], correct: 2 },
+                    { text: "What is this animal?", emoji: "🐴", options: ["Horse", "Rabbit", "Cat", "Bird"], correct: 0 },
+                    { text: "What is this insect?", emoji: "🐝", options: ["Ant", "Butterfly", "Bee", "Spider"], correct: 2 },
+                    { text: "What is this animal?", emoji: "🐰", options: ["Mouse", "Rabbit", "Dog", "Fish"], correct: 1 }
+                ]
+            },
+            {
+                id: 'food',
+                title: 'Fruits & Food',
+                iconClass: 'fa-solid fa-apple-whole',
+                desc: 'Delicious food and drinks',
+                questions: [
+                    { text: "What is this fruit?", emoji: "🍎", options: ["Banana", "Grape", "Orange", "Apple"], correct: 3 },
+                    { text: "What is this fruit?", emoji: "🍌", options: ["Banana", "Lemon", "Apple", "Cherry"], correct: 0 },
+                    { text: "What is this food?", emoji: "🍕", options: ["Bread", "Pizza", "Cheese", "Cake"], correct: 1 },
+                    { text: "What is this drink?", emoji: "🥛", options: ["Water", "Tea", "Milk", "Juice"], correct: 2 },
+                    { text: "What is this food?", emoji: "🍞", options: ["Egg", "Cake", "Rice", "Bread"], correct: 3 },
+                    { text: "What is this?", emoji: "🍦", options: ["Ice cream", "Cake", "Soup", "Pasta"], correct: 0 },
+                    { text: "What is this fruit?", emoji: "🍋", options: ["Apple", "Lemon", "Banana", "Pear"], correct: 1 },
+                    { text: "What is this food?", emoji: "🍔", options: ["Pizza", "Salad", "Hamburger", "Sandwich"], correct: 2 },
+                    { text: "What is this food?", emoji: "🥚", options: ["Egg", "Cheese", "Bread", "Apple"], correct: 0 },
+                    { text: "What are these?", emoji: "🍇", options: ["Cherries", "Strawberries", "Lemons", "Grapes"], correct: 3 }
+                ]
+            },
+            {
+                id: 'house',
+                title: 'House & Family',
+                iconClass: 'fa-solid fa-house-user',
+                desc: 'Rooms, house items, and family members',
+                questions: [
+                    { text: "What is this?", emoji: "🏠", options: ["School", "House", "Park", "Shop"], correct: 1 },
+                    { text: "What is this?", emoji: "🛏️", options: ["Bed", "Sofa", "Table", "Chair"], correct: 0 },
+                    { text: "What is this?", emoji: "🛋️", options: ["Bed", "Desk", "Sofa", "Lamp"], correct: 2 },
+                    { text: "What is this?", emoji: "📺", options: ["Computer", "Television", "Clock", "Telephone"], correct: 1 },
+                    { text: "What is this?", emoji: "🚪", options: ["Window", "Wall", "Door", "Floor"], correct: 2 },
+                    { text: "What is this?", emoji: "🪟", options: ["Window", "Door", "Table", "Bed"], correct: 0 },
+                    { text: "What is this?", emoji: "🚿", options: ["Bed", "Sink", "Shower", "Mirror"], correct: 2 },
+                    { text: "What is this?", emoji: "💡", options: ["Lamp", "Clock", "Phone", "Book"], correct: 0 },
+                    { text: "What is this?", emoji: "🛁", options: ["Bath", "Bed", "Chair", "Door"], correct: 0 },
+                    { text: "Who are they?", emoji: "👨‍👩‍👧‍👦", options: ["Teachers", "Students", "Friends", "Family"], correct: 3 }
+                ]
+            },
+            {
+                id: 'hobbies',
+                title: 'Hobbies & Games',
+                iconClass: 'fa-solid fa-gamepad',
+                desc: 'Sports, games, and fun hobbies',
+                questions: [
+                    { text: "What sport is this?", emoji: "⚽", options: ["Basketball", "Football", "Tennis", "Swimming"], correct: 1 },
+                    { text: "What sport is this?", emoji: "🏀", options: ["Football", "Volleyball", "Basketball", "Tennis"], correct: 2 },
+                    { text: "What instrument is this?", emoji: "🎸", options: ["Piano", "Drum", "Violin", "Guitar"], correct: 3 },
+                    { text: "What instrument is this?", emoji: "🎹", options: ["Piano", "Guitar", "Drum", "Flute"], correct: 0 },
+                    { text: "What is this hobby?", emoji: "🚴", options: ["Swimming", "Riding a bike", "Running", "Skating"], correct: 1 },
+                    { text: "What is this sport?", emoji: "🏊", options: ["Swimming", "Running", "Dancing", "Cycling"], correct: 0 },
+                    { text: "What is this hobby?", emoji: "🎨", options: ["Singing", "Reading", "Painting", "Cooking"], correct: 2 },
+                    { text: "What is this hobby?", emoji: "🎮", options: ["Playing video games", "Reading", "Cooking", "Painting"], correct: 0 },
+                    { text: "What is this game?", emoji: "♟️", options: ["Chess", "Football", "Cards", "Puzzle"], correct: 0 },
+                    { text: "What is this?", emoji: "🏕️", options: ["Swimming", "Camping", "Running", "Cooking"], correct: 1 }
+                ]
+            }
+        ];
+
+        const AVATARS = [
+            { id: 'dog', icon: 'fa-solid fa-dog', color: 'bg-amber-400', name: 'Dog' },
+            { id: 'cat', icon: 'fa-solid fa-cat', color: 'bg-orange-400', name: 'Cat' },
+            { id: 'crow', icon: 'fa-solid fa-crow', color: 'bg-sky-400', name: 'Bird' },
+            { id: 'frog', icon: 'fa-solid fa-frog', color: 'bg-emerald-400', name: 'Frog' },
+            { id: 'fish', icon: 'fa-solid fa-fish-fins', color: 'bg-blue-400', name: 'Fish' },
+            { id: 'dragon', icon: 'fa-solid fa-dragon', color: 'bg-rose-400', name: 'Dragon' },
+            { id: 'hippo', icon: 'fa-solid fa-hippo', color: 'bg-purple-400', name: 'Hippo' },
+            { id: 'otter', icon: 'fa-solid fa-otter', color: 'bg-teal-400', name: 'Otter' }
+        ];
+
+        class SoundFX {
+            constructor() {
+                this.muted = false;
+                try {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                } catch(e) {
+                    this.ctx = null;
+                }
+            }
+
+            playTone(freq, type, duration, delay=0) {
+                if (this.muted || !this.ctx) return;
+                setTimeout(() => {
+                    try {
+                        if (this.ctx.state === 'suspended') {
+                            this.ctx.resume();
+                        }
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = type;
+                        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start();
+                        osc.stop(this.ctx.currentTime + duration);
+                    } catch(e) {}
+                }, delay);
+            }
+
+            playCorrect() {
+                this.playTone(523.25, 'triangle', 0.15, 0);
+                this.playTone(659.25, 'triangle', 0.15, 100);
+                this.playTone(783.99, 'triangle', 0.3, 200);
+            }
+
+            playWrong() {
+                this.playTone(220, 'sawtooth', 0.2, 0);
+                this.playTone(185, 'sawtooth', 0.3, 150);
+            }
+
+            playTick() {
+                this.playTone(440, 'sine', 0.05, 0);
+            }
+
+            playFanfare() {
+                this.playTone(523.25, 'triangle', 0.2, 0);
+                this.playTone(659.25, 'triangle', 0.2, 200);
+                this.playTone(783.99, 'triangle', 0.2, 400);
+                this.playTone(1046.50, 'triangle', 0.6, 600);
+            }
+        }
+
+        const sfx = new SoundFX();
+
+        class SafariApp {
+            constructor() {
+                this.role = 'student';
+                this.isTeacherAuthenticated = false;
+                this.roomId = ROOM_ID;
+                this.roomData = null;
+                this.playerId = 'player_' + Math.random().toString(36).substring(2, 9);
+                this.playerName = '';
+                this.playerAvatar = AVATARS[0];
+                this.selectedQuizPack = QUIZ_PACKS[0];
+                this.playerCurrentQuestionIndex = 0;
+                this.playerScore = 0;
+                this.playerCorrectCount = 0;
+                this.playerWrongCount = 0;
+                this.questionTimer = null;
+                this.hasAnsweredCurrent = false;
+                this.unsubscribeFirestore = null;
+                this.unsubscribePlayers = null;
+                this.cloudPlayers = {};
+                this.lastBotTick = 0;
+
+                this.loadSavedCustomPacks();
+                this.renderAvatarSelector();
+                this.renderTeacherQuizPacks();
+            }
+
+            toggleTheme() {
+                const htmlEl = document.documentElement;
+                const isDark = htmlEl.classList.toggle('dark');
+                const themeIcon = document.getElementById('themeIcon');
+                if (isDark) {
+                    themeIcon.className = 'fa-solid fa-sun text-lg text-amber-300';
+                } else {
+                    themeIcon.className = 'fa-solid fa-moon text-lg text-slate-700';
+                }
+            }
+
+            handleBrandClick() {
+                if (this.role === 'host' || this.isTeacherAuthenticated) {
+                    this.showTeacherSetup();
+                } else {
+                    this.showPlayerSetup();
+                }
+            }
+
+            loadSavedCustomPacks() {
+                try {
+                    const saved = localStorage.getItem('word_adventure_custom_packs_v3');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            parsed.forEach(sp => {
+                                const target = QUIZ_PACKS.find(q => q.id === sp.id);
+                                if (target) target.questions = sp.questions;
+                            });
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            openQuestionEditorModal() {
+                const select = document.getElementById('editorPackSelect');
+                select.innerHTML = QUIZ_PACKS.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+                select.value = this.selectedQuizPack.id;
+                this.renderEditorQuestions(this.selectedQuizPack.id);
+                document.getElementById('questionEditorModal').classList.remove('hidden');
+            }
+
+            closeQuestionEditorModal() {
+                document.getElementById('questionEditorModal').classList.add('hidden');
+            }
+
+            switchEditorPack(packId) {
+                this.renderEditorQuestions(packId);
+            }
+
+            renderEditorQuestions(packId) {
+                const pack = QUIZ_PACKS.find(p => p.id === packId);
+                if (!pack) return;
+
+                const container = document.getElementById('editorQuestionsList');
+                container.innerHTML = pack.questions.map((q, idx) => `
+                    <div class="bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 rounded-2xl p-4 space-y-3" id="edit_q_${packId}_${idx}">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-xs bg-sky-200 text-sky-900 px-2.5 py-1 rounded-lg">Question #${idx + 1}</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400 font-bold">Edit text, image URL & options</span>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-black text-slate-700 dark:text-slate-300 mb-1">Question Text</label>
+                            <input type="text" id="eq_text_${packId}_${idx}" value="${q.text}" class="w-full p-2 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-bold text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-black text-slate-700 dark:text-slate-300 mb-1">Emoji picture (shown big; leave empty to use an image URL)</label>
+                            <input type="text" id="eq_emoji_${packId}_${idx}" value="${q.emoji || ''}" class="w-full p-2 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-bold text-lg bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-black text-slate-700 dark:text-slate-300 mb-1">Image URL (optional)</label>
+                            <input type="text" id="eq_img_${packId}_${idx}" value="${q.imageUrl || ''}" class="w-full p-2 border-2 border-slate-300 dark:border-slate-700 rounded-xl font-bold text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            ${[0, 1, 2, 3].map(optIdx => `
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 mb-0.5">Option ${String.fromCharCode(65 + optIdx)} ${optIdx === q.correct ? '⭐ (Correct)' : ''}</label>
+                                    <input type="text" id="eq_opt_${packId}_${idx}_${optIdx}" value="${q.options[optIdx] || ''}" class="w-full p-1.5 border-2 border-slate-300 dark:border-slate-700 rounded-lg font-bold text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-black text-emerald-700 dark:text-emerald-400 mb-1">Correct Answer (0 = A, 1 = B, 2 = C, 3 = D)</label>
+                            <select id="eq_correct_${packId}_${idx}" class="p-2 border-2 border-emerald-500 rounded-xl font-black text-xs bg-emerald-50 dark:bg-emerald-950 text-emerald-900 dark:text-emerald-200">
+                                <option value="0" ${q.correct === 0 ? 'selected' : ''}>A - ${q.options[0]}</option>
+                                <option value="1" ${q.correct === 1 ? 'selected' : ''}>B - ${q.options[1]}</option>
+                                <option value="2" ${q.correct === 2 ? 'selected' : ''}>C - ${q.options[2]}</option>
+                                <option value="3" ${q.correct === 3 ? 'selected' : ''}>D - ${q.options[3]}</option>
+                            </select>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            saveCustomQuestions() {
+                const packId = document.getElementById('editorPackSelect').value;
+                const pack = QUIZ_PACKS.find(p => p.id === packId);
+                if (!pack) return;
+
+                pack.questions.forEach((q, idx) => {
+                    const textEl = document.getElementById(`eq_text_${packId}_${idx}`);
+                    const imgEl = document.getElementById(`eq_img_${packId}_${idx}`);
+                    const correctEl = document.getElementById(`eq_correct_${packId}_${idx}`);
+
+                    if (textEl) q.text = textEl.value.trim();
+                    if (imgEl) q.imageUrl = imgEl.value.trim();
+                    const emojiEl = document.getElementById(`eq_emoji_${packId}_${idx}`);
+                    if (emojiEl) q.emoji = emojiEl.value.trim();
+                    if (correctEl) q.correct = parseInt(correctEl.value);
+
+                    for (let i = 0; i < 4; i++) {
+                        const optEl = document.getElementById(`eq_opt_${packId}_${idx}_${i}`);
+                        if (optEl) q.options[i] = optEl.value.trim();
+                    }
+                });
+
+                try {
+                    localStorage.setItem('word_adventure_custom_packs_v3', JSON.stringify(QUIZ_PACKS.map(p => ({ id: p.id, questions: p.questions }))));
+                } catch(e) {}
+
+                this.renderTeacherQuizPacks();
+                this.closeQuestionEditorModal();
+            }
+
+            showView(viewId) {
+                ['viewPlayerSetup', 'viewTeacherSetup', 'viewLobby', 'viewQuestion', 'viewTeacherScoreboard', 'viewGameOver'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.classList.add('hidden');
+                });
+                const target = document.getElementById(viewId);
+                if (target) target.classList.remove('hidden');
+            }
+
+            showPlayerSetup() {
+                this.role = 'student';
+                this.showView('viewPlayerSetup');
+                if (this.unsubscribeFirestore) {
+                    this.unsubscribeFirestore();
+                    this.unsubscribeFirestore = null;
+                }
+            }
+
+            openTeacherAuthModal() {
+                document.getElementById('teacherAuthModal').classList.remove('hidden');
+                document.getElementById('teacherPasswordInput').value = '';
+                document.getElementById('passwordErrorText').classList.add('hidden');
+            }
+
+            closeTeacherAuthModal() {
+                document.getElementById('teacherAuthModal').classList.add('hidden');
+            }
+
+            verifyTeacherPassword(e) {
+                e.preventDefault();
+                const pass = document.getElementById('teacherPasswordInput').value.trim().toLowerCase();
+                if (pass === 'husuveilko') {
+                    this.isTeacherAuthenticated = true;
+                    this.closeTeacherAuthModal();
+                    this.showTeacherSetup();
+                } else {
+                    document.getElementById('passwordErrorText').classList.remove('hidden');
+                    sfx.playWrong();
+                }
+            }
+
+            showTeacherSetup() {
+                this.role = 'host';
+                this.isTeacherAuthenticated = true;
+                this.showView('viewTeacherSetup');
+                if (this.unsubscribeFirestore) {
+                    this.unsubscribeFirestore();
+                    this.unsubscribeFirestore = null;
+                }
+            }
+
+            renderAvatarSelector() {
+                const container = document.getElementById('avatarSelector');
+                container.innerHTML = AVATARS.map(a => `
+                    <button type="button" id="avatar_${a.id}" onclick="app.selectAvatar('${a.id}')" 
+                            class="cartoon-btn p-3 bg-slate-50 dark:bg-slate-800 border-2 border-slate-300 dark:border-slate-700 rounded-2xl flex flex-col items-center justify-center gap-1 hover:bg-amber-50 dark:hover:bg-slate-700">
+                        <div class="w-10 h-10 rounded-xl ${a.color} text-slate-900 border-2 border-slate-800 flex items-center justify-center text-xl shadow-sm">
+                            <i class="${a.icon}"></i>
+                        </div>
+                        <span class="text-[11px] font-black text-slate-700 dark:text-slate-300">${a.name}</span>
+                    </button>
+                `).join('');
+                this.updateAvatarSelectionUI(AVATARS[0].id);
+            }
+
+            selectAvatar(id) {
+                const found = AVATARS.find(a => a.id === id);
+                if (found) {
+                    this.playerAvatar = found;
+                    this.updateAvatarSelectionUI(id);
+                }
+            }
+
+            updateAvatarSelectionUI(selectedId) {
+                AVATARS.forEach(a => {
+                    const btn = document.getElementById(`avatar_${a.id}`);
+                    if (btn) {
+                        if (a.id === selectedId) {
+                            btn.classList.add('bg-banana-light', 'border-slate-800', 'ring-2', 'ring-banana-dark');
+                            btn.classList.remove('bg-slate-50', 'dark:bg-slate-800', 'border-slate-300', 'dark:border-slate-700');
+                        } else {
+                            btn.classList.remove('bg-banana-light', 'border-slate-800', 'ring-2', 'ring-banana-dark');
+                            btn.classList.add('bg-slate-50', 'dark:bg-slate-800', 'border-slate-300', 'dark:border-slate-700');
+                        }
+                    }
+                });
+
+                const customBtn = document.getElementById('customAvatarBtn');
+                if (selectedId === 'custom') {
+                    customBtn.classList.add('bg-emerald-200', 'border-emerald-600', 'text-emerald-900');
+                    customBtn.classList.remove('bg-sky-100', 'text-sky-900');
+                    document.getElementById('customAvatarBtnText').innerHTML = 'Photo Selected <i class="fa-solid fa-circle-check text-emerald-600 ml-1"></i> (Change)';
+                } else {
+                    customBtn.classList.remove('bg-emerald-200', 'border-emerald-600', 'text-emerald-900');
+                    customBtn.classList.add('bg-sky-100', 'text-sky-900');
+                    document.getElementById('customAvatarBtnText').innerHTML = 'Upload Photo from Gallery <i class="fa-solid fa-image ml-1"></i>';
+                }
+            }
+
+            handleCustomPhotoUpload(e) {
+                const file = e.target.files?.[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const maxDim = 120;
+                        let w = img.width, h = img.height;
+                        if (w > h) {
+                            if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+                        } else {
+                            if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+                        }
+                        canvas.width = w;
+                        canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        const base64Data = canvas.toDataURL('image/jpeg', 0.8);
+                        this.playerAvatar = { id: 'custom', photo: base64Data, name: 'My Photo' };
+                        this.updateAvatarSelectionUI('custom');
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            renderAvatarDisplay(avatarObj, sizeClass = "w-8 h-8 text-2xl") {
+                if (avatarObj?.photo) {
+                    return `<img src="${avatarObj.photo}" alt="Avatar" class="${sizeClass} rounded-full object-cover border-2 border-slate-800 shadow-sm inline-block shrink-0" />`;
+                }
+                if (avatarObj?.icon) {
+                    const bgColor = avatarObj.color || 'bg-banana';
+                    return `<div class="${sizeClass} rounded-xl ${bgColor} text-slate-900 border-2 border-slate-800 flex items-center justify-center shrink-0 shadow-sm"><i class="${avatarObj.icon}"></i></div>`;
+                }
+                return `<div class="${sizeClass} rounded-xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center shrink-0"><i class="fa-solid fa-user"></i></div>`;
+            }
+
+            renderTeacherQuizPacks() {
+                const container = document.getElementById('quizPackList');
+                container.innerHTML = QUIZ_PACKS.map(pack => `
+                    <div onclick="app.selectQuizPack('${pack.id}')" id="packCard_${pack.id}"
+                         class="cartoon-card p-4 cursor-pointer flex items-center gap-3 bg-white dark:bg-slate-900 hover:bg-sky-50 dark:hover:bg-slate-800 transition-all ${pack.id === this.selectedQuizPack.id ? 'border-sky-500 ring-2 ring-sky-300' : ''}">
+                        <div class="w-12 h-12 rounded-2xl bg-banana text-slate-900 border-2 border-slate-800 flex items-center justify-center text-xl shrink-0">
+                            <i class="${pack.iconClass}"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <h5 class="font-black text-slate-800 dark:text-white text-base">${pack.title}</h5>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 font-bold">${pack.questions.length} Questions &bull; ${pack.desc}</p>
+                        </div>
+                    </div>
+                `).join('');
+                this.renderQuizPreview();
+            }
+
+            selectQuizPack(packId) {
+                const found = QUIZ_PACKS.find(p => p.id === packId);
+                if (found) {
+                    this.selectedQuizPack = found;
+                    this.renderTeacherQuizPacks();
+                    if (this.roomData) {
+                        this.roomData.quizPack = found;
+                        this.syncRoomToCloud();
+                    }
+                }
+            }
+
+            renderQuizPreview() {
+                document.getElementById('selectedQuizCount').innerText = this.selectedQuizPack.questions.length;
+                const list = document.getElementById('quizPreviewList');
+                list.innerHTML = this.selectedQuizPack.questions.map((q, idx) => `
+                    <div class="bg-white dark:bg-slate-900 p-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs font-bold text-slate-700 dark:text-slate-300">
+                        <div class="flex items-center gap-2 truncate">
+                            <span class="w-6 h-6 rounded-lg bg-sky-100 dark:bg-sky-900 text-sky-800 dark:text-sky-200 border border-slate-300 dark:border-slate-700 flex items-center justify-center shrink-0 font-black">${idx + 1}</span>
+                            <span class="truncate">${q.text}</span>
+                        </div>
+                        <span class="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-2 py-0.5 rounded-md shrink-0 ml-2">Correct: ${q.options[q.correct]}</span>
+                    </div>
+                `).join('');
+            }
+
+            async createNewRoom() {
+                this.role = 'host';
+                this.roomId = ROOM_ID;
+                this.roomData = {
+                    state: 'lobby',
+                    quizPack: this.selectedQuizPack,
+                    players: {}
+                };
+                this.cloudPlayers = this.roomData.players;
+
+                await this.syncRoomToCloud(true);
+                this.setupLobbyUI();
+                this.listenToRoomCloud();
+            }
+
+            async syncRoomToCloud(isNew = false, playerIds = []) {
+                if (!this.roomId) return;
+                try {
+                    if (db) {
+                        const roomRef = doc(db, 'rooms', this.roomId);
+                        const roomOnly = {};
+                        Object.keys(this.roomData).forEach(k => { if (k !== 'players') roomOnly[k] = this.roomData[k]; });
+
+                        if (isNew) {
+                            try {
+                                const snap = await getDocs(collection(db, 'rooms', this.roomId, 'players'));
+                                await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
+                            } catch(e) { console.error("Old players cleanup:", e); }
+                            await setDoc(roomRef, roomOnly);
+                        } else if (this.role === 'host') {
+                            await updateDoc(roomRef, roomOnly);
+                        }
+
+                        await Promise.all((playerIds || []).map(id => {
+                            const pl = this.roomData.players && this.roomData.players[id];
+                            return pl ? setDoc(doc(db, 'rooms', this.roomId, 'players', id), pl) : null;
+                        }));
+                    }
+                } catch(e) {
+                    console.error("Cloud sync fallback:", e);
+                }
+                try {
+                    localStorage.setItem(`word_adventure_room_${this.roomId}`, JSON.stringify(this.roomData));
+                } catch(e) {}
+            }
+
+            listenToRoomCloud() {
+                if (!this.roomId) return;
+                if (this.unsubscribeFirestore) this.unsubscribeFirestore();
+                if (this.unsubscribePlayers) this.unsubscribePlayers();
+
+                if (db) {
+                    try {
+                        const roomRef = doc(db, 'rooms', this.roomId);
+                        this.unsubscribeFirestore = onSnapshot(roomRef, (docSnap) => {
+                            if (docSnap.exists()) {
+                                const d = docSnap.data();
+                                d.players = this.cloudPlayers || {};
+                                this.roomData = d;
+                                this.handleRoomStateChange();
+                            }
+                        }, (error) => {
+                            console.error("Firestore listener error:", error);
+                        });
+
+                        this.unsubscribePlayers = onSnapshot(collection(db, 'rooms', this.roomId, 'players'), (snap) => {
+                            const map = {};
+                            snap.forEach(d => { map[d.id] = d.data(); });
+                            this.cloudPlayers = map;
+                            if (this.roomData) {
+                                this.roomData.players = map;
+                                this.handleRoomStateChange();
+                            }
+                        }, (error) => {
+                            console.error("Players listener error:", error);
+                        });
+                    } catch(e) {}
+                }
+
+                if (db) return;
+                this.storageInterval = setInterval(() => {
+                    try {
+                        const raw = localStorage.getItem(`word_adventure_room_${this.roomId}`);
+                        if (raw) {
+                            const parsed = JSON.parse(raw);
+                            if (parsed && JSON.stringify(parsed) !== JSON.stringify(this.roomData)) {
+                                this.roomData = parsed;
+                                this.handleRoomStateChange();
+                            }
+                        }
+                    } catch(e) {}
+                }, 800);
+            }
+
+            async joinRoomAsPlayer(e) {
+                e.preventDefault();
+                const name = document.getElementById('playerNameInput').value.trim();
+                if (!name) return;
+
+                this.roomId = ROOM_ID;
+                this.playerName = name;
+                this.role = 'student';
+
+                let foundRoom = null;
+                if (db) {
+                    try {
+                        const roomRef = doc(db, 'rooms', this.roomId);
+                        const docSnap = await getDoc(roomRef);
+                        if (docSnap.exists()) {
+                            foundRoom = docSnap.data();
+                        }
+                    } catch(e) {}
+                }
+
+                if (!foundRoom) {
+                    try {
+                        const localRaw = localStorage.getItem(`word_adventure_room_${this.roomId}`);
+                        if (localRaw) {
+                            foundRoom = JSON.parse(localRaw);
+                        }
+                    } catch(e) {}
+                }
+
+                if (!foundRoom) {
+                    alert("There is no active room yet. Please ask your teacher to create the room, then try again.");
+                    return;
+                }
+
+                this.roomData = foundRoom;
+                this.cloudPlayers = this.roomData.players || {};
+                this.roomData.players = this.cloudPlayers;
+
+                this.roomData.players[this.playerId] = {
+                    id: this.playerId,
+                    name: this.playerName,
+                    avatar: this.playerAvatar,
+                    score: 0,
+                    correct: 0,
+                    wrong: 0,
+                    questionIndex: 0
+                };
+
+                await this.syncRoomToCloud(false, [this.playerId]);
+                this.setupLobbyUI();
+                this.listenToRoomCloud();
+            }
+
+            updateLobbyPlayersGrid() {
+                if (!this.roomData) return;
+                const players = Object.values(this.roomData.players || {});
+                const badge = document.getElementById('playerCountBadge');
+                if (badge) badge.innerText = players.length;
+
+                const grid = document.getElementById('lobbyPlayersGrid');
+                if (players.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-slate-400 dark:text-slate-500 font-bold my-auto">No players joined yet...</div>`;
+                    return;
+                }
+
+                grid.innerHTML = players.map(p => `
+                    <div class="cartoon-card bg-white dark:bg-slate-900 p-3 flex flex-col items-center justify-center">
+                        ${this.renderAvatarDisplay(p.avatar, 'w-10 h-10 text-xl')}
+                        <span class="text-xs font-black text-slate-800 dark:text-white truncate w-full text-center mt-1">${p.name}</span>
+                    </div>
+                `).join('');
+            }
+
+            setupLobbyUI() {
+                document.getElementById('cloudStatusBadge').classList.remove('hidden');
+
+                let savedUrl = '';
+                try { savedUrl = localStorage.getItem('ewwGameUrl') || ''; } catch(e) {}
+                const defaultUrl = `${window.location.origin}${window.location.pathname}`;
+                const shareUrl = savedUrl || defaultUrl;
+                this.renderQr(shareUrl);
+
+                if (this.role === 'host') {
+                    document.getElementById('hostLobbyControls').classList.remove('hidden');
+                    document.getElementById('playerLobbyNotice').classList.add('hidden');
+                    const backBtnContainer = document.getElementById('hostBackToPanelBtnContainer');
+                    if (backBtnContainer) backBtnContainer.classList.remove('hidden');
+                } else {
+                    document.getElementById('hostLobbyControls').classList.add('hidden');
+                    document.getElementById('playerLobbyNotice').classList.remove('hidden');
+                    const backBtnContainer = document.getElementById('hostBackToPanelBtnContainer');
+                    if (backBtnContainer) backBtnContainer.classList.add('hidden');
+                }
+
+                this.showView('viewLobby');
                 this.updateLobbyPlayersGrid();
             }
 
-            if (this.roomData.state === 'started') {
-                if (this.role === 'host') {
-                    this.renderTeacherScoreboard();
-                } else {
-                    if (lobbyView && !lobbyView.classList.contains('hidden')) {
-                        this.startStudentSelfPacedQuiz();
-                    }
-                }
-            } else if (this.roomData.state === 'ended') {
-                if (this.role === 'host') {
-                    this.renderTeacherScoreboard();
-                } else {
-                    this.renderFinalResultsForAll();
-                }
-            }
-        }
-
-        async startGame() {
-            this.roomData.state = 'started';
-            await this.syncRoomToCloud();
-
-            if (this.role === 'host') {
-                this.renderTeacherScoreboard();
-            } else {
-                this.startStudentSelfPacedQuiz();
-            }
-        }
-
-        renderTeacherScoreboard() {
-            this.showView('viewTeacherScoreboard');
-            
-            const titleTextEl = document.getElementById('scoreboardTitleText');
-            const podiumEl = document.getElementById('podiumContainer');
-            
-            if (this.roomData?.state === 'ended') {
-                if (titleTextEl) {
-                    titleTextEl.innerHTML = `<span>Final Standings Table</span>`;
-                }
-                if (podiumEl) {
-                    podiumEl.classList.remove('hidden');
-                    this.renderPodiumStands('podiumStands');
-                }
-            } else {
-                if (titleTextEl) {
-                    titleTextEl.innerHTML = `<span>Live Standings Table</span>`;
-                }
-                if (podiumEl) {
-                    podiumEl.classList.add('hidden');
-                }
+            renderQr(url) {
+                const qrContainer = document.getElementById('qrcode');
+                if (!qrContainer) return;
+                qrContainer.innerHTML = '';
+                if (!url) return;
+                try {
+                    new QRCode(qrContainer, {
+                        text: url,
+                        width: 150,
+                        height: 150,
+                        colorDark: "#1E293B",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                } catch(e) {}
             }
 
-            const players = Object.values(this.roomData?.players || {}).sort((a, b) => b.score - a.score);
+            addBotPlayer() {
+                const botNames = ["Alex 🐶", "Emma 🐱", "Leo 🐸", "Sophia 🐦", "Max 🐟"];
+                const randomName = botNames[Math.floor(Math.random() * botNames.length)] + " (Bot)";
+                const botId = 'bot_' + Math.random().toString(36).substring(2, 7);
+                const randomAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
 
-            const list = document.getElementById('teacherLeaderboardList');
-            list.innerHTML = players.map((p, idx) => {
-                const currentRank = idx + 1;
-                const packTotal = this.roomData?.quizPack ? this.roomData.quizPack.questions.length : 10;
-                const played = Math.min(p.questionIndex || 0, packTotal);
-                const correct = p.correct || 0;
-                const wrong = p.wrong || 0;
-                const points = p.score || 0;
+                const botData = {
+                    id: botId,
+                    name: randomName,
+                    avatar: randomAvatar,
+                    score: 0,
+                    correct: 0,
+                    wrong: 0,
+                    questionIndex: 0
+                };
 
-                let posBadge = `<span class="font-black text-slate-700 dark:text-slate-300">${currentRank}</span>`;
-                if (currentRank === 1) posBadge = `<span class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center font-black text-xs mx-auto">1</span>`;
-                else if (currentRank === 2) posBadge = `<span class="w-6 h-6 rounded-full bg-slate-300 text-slate-900 flex items-center justify-center font-black text-xs mx-auto">2</span>`;
-                else if (currentRank === 3) posBadge = `<span class="w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center font-black text-xs mx-auto">3</span>`;
-
-                return `
-                    <tr class="pl-row border-b border-slate-100 dark:border-slate-800">
-                        <td class="py-2.5 px-3 text-center font-black">${posBadge}</td>
-                        <td class="py-2.5 px-3">
-                            <div class="flex items-center gap-2.5">
-                                ${this.renderAvatarDisplay(p.avatar, 'w-8 h-8 text-lg')}
-                                <span class="font-black text-slate-800 dark:text-white text-sm truncate max-w-[140px]">${p.name}</span>
-                            </div>
-                        </td>
-                        <td class="py-2.5 px-3 text-center font-bold text-slate-600 dark:text-slate-400">${played} / ${packTotal}</td>
-                        <td class="py-2.5 px-3 text-center font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/40 rounded-lg">${correct}</td>
-                        <td class="py-2.5 px-3 text-center font-black text-rose-500 dark:text-rose-400 bg-rose-50/50 dark:bg-rose-950/40 rounded-lg">${wrong}</td>
-                        <td class="py-2.5 px-3 text-right pr-4 font-black text-base text-slate-900 dark:text-white">${points}</td>
-                    </tr>
-                `;
-            }).join('');
-
-            this.simulateBotProgress();
-        }
-
-        renderPodiumStands(containerId) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-
-            const players = Object.values(this.roomData?.players || {}).sort((a, b) => b.score - a.score);
-            const first = players[0];
-            const second = players[1];
-            const third = players[2];
-
-            let html = '';
-
-            if (second) {
-                html += `
-                    <div class="flex flex-col items-center flex-1 max-w-[100px]">
-                        <div class="mb-1 text-center">
-                            ${this.renderAvatarDisplay(second.avatar, 'w-12 h-12 text-xl')}
-                            <div class="text-xs font-black text-slate-800 dark:text-white truncate max-w-[90px] mt-1">${second.name}</div>
-                            <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400">${second.score || 0} pts</div>
-                        </div>
-                        <div class="w-full h-24 bg-slate-300 dark:bg-slate-700 border-3 border-slate-800 dark:border-slate-600 rounded-t-2xl flex items-center justify-center text-2xl font-black text-slate-700 dark:text-slate-200 shadow-md">
-                            🥈 2
-                        </div>
-                    </div>
-                `;
+                if (!this.roomData.players) this.roomData.players = {};
+                this.roomData.players[botId] = botData;
+                this.syncRoomToCloud(false, [botId]);
+                this.updateLobbyPlayersGrid();
             }
 
-            if (first) {
-                html += `
-                    <div class="flex flex-col items-center flex-1 max-w-[110px] -translate-y-4">
-                        <div class="mb-1 text-center">
-                            <div class="text-amber-500 text-lg mb-0.5 animate-bounce">👑</div>
-                            ${this.renderAvatarDisplay(first.avatar, 'w-14 h-14 text-2xl')}
-                            <div class="text-xs font-black text-slate-900 dark:text-white truncate max-w-[100px] mt-1">${first.name}</div>
-                            <div class="text-xs font-black text-amber-700 dark:text-amber-400">${first.score || 0} pts</div>
-                        </div>
-                        <div class="w-full h-32 bg-amber-400 border-3 border-slate-800 dark:border-slate-600 rounded-t-2xl flex items-center justify-center text-3xl font-black text-slate-900 shadow-lg">
-                            🥇 1
-                        </div>
-                    </div>
-                `;
-            }
+            handleRoomStateChange() {
+                if (!this.roomData) return;
+                
+                const lobbyView = document.getElementById('viewLobby');
+                if (lobbyView && !lobbyView.classList.contains('hidden')) {
+                    this.updateLobbyPlayersGrid();
+                }
 
-            if (third) {
-                html += `
-                    <div class="flex flex-col items-center flex-1 max-w-[100px]">
-                        <div class="mb-1 text-center">
-                            ${this.renderAvatarDisplay(third.avatar, 'w-12 h-12 text-xl')}
-                            <div class="text-xs font-black text-slate-800 dark:text-white truncate max-w-[90px] mt-1">${third.name}</div>
-                            <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400">${third.score || 0} pts</div>
-                        </div>
-                        <div class="w-full h-20 bg-amber-600/80 border-3 border-slate-800 dark:border-slate-600 rounded-t-2xl flex items-center justify-center text-2xl font-black text-white shadow-md">
-                            🥉 3
-                        </div>
-                    </div>
-                `;
-            }
-
-            container.innerHTML = html;
-        }
-
-        simulateBotProgress() {
-            if (this.role !== 'host' || !this.roomData?.players) return;
-            const nowTs = Date.now();
-            if (nowTs - this.lastBotTick < 2500) return;
-            this.lastBotTick = nowTs;
-            const packTotal = this.roomData.quizPack ? this.roomData.quizPack.questions.length : 10;
-            let changed = false;
-            Object.values(this.roomData.players).forEach(p => {
-                if (p.id.startsWith('bot_') && (p.questionIndex || 0) < packTotal && Math.random() < 0.25) {
-                    const isCorrect = Math.random() > 0.3;
-                    if (isCorrect) {
-                        p.score = (p.score || 0) + Math.floor(Math.random() * 8) + 2;
-                        p.correct = (p.correct || 0) + 1;
+                if (this.roomData.state === 'started') {
+                    if (this.role === 'host') {
+                        this.renderTeacherScoreboard();
                     } else {
-                        p.wrong = (p.wrong || 0) + 1;
-                    }
-                    p.questionIndex = Math.min((p.questionIndex || 0) + 1, packTotal);
-                    changed = true;
-                }
-            });
-            if (changed) {
-                this.syncRoomToCloud(false, Object.keys(this.roomData.players).filter(id => id.startsWith('bot_')));
-            }
-        }
-
-        startStudentSelfPacedQuiz() {
-            this.playerCurrentQuestionIndex = 0;
-            this.playerScore = 0;
-            this.playerCorrectCount = 0;
-            this.playerWrongCount = 0;
-            this.showView('viewQuestion');
-            this.renderCurrentStudentQuestion();
-        }
-
-        renderCurrentStudentQuestion() {
-            const pack = this.roomData?.quizPack || this.selectedQuizPack;
-            if (this.playerCurrentQuestionIndex >= pack.questions.length) {
-                this.finishStudentQuiz();
-                return;
-            }
-
-            this.hasAnsweredCurrent = false;
-            const q = pack.questions[this.playerCurrentQuestionIndex];
-
-            document.getElementById('qProgressText').innerText = `Question ${this.playerCurrentQuestionIndex + 1} / ${pack.questions.length}`;
-            document.getElementById('qCategoryBadge').innerText = pack.title;
-            
-            const imgDisplay = document.getElementById('qImageDisplay');
-            const fallbackIcon = document.getElementById('qFallbackIcon');
-
-            if (q.emoji) {
-                imgDisplay.style.display = 'none';
-                fallbackIcon.style.display = 'flex';
-                fallbackIcon.innerHTML = `<span style="font-size:8rem;line-height:1;">${q.emoji}</span>`;
-            } else if (q.imageUrl) {
-                fallbackIcon.innerHTML = '<i class="fa-solid fa-image"></i>';
-                imgDisplay.style.display = 'block';
-                fallbackIcon.style.display = 'none';
-                imgDisplay.src = q.imageUrl;
-            } else {
-                fallbackIcon.innerHTML = '<i class="fa-solid fa-image"></i>';
-                imgDisplay.style.display = 'none';
-                fallbackIcon.style.display = 'flex';
-            }
-
-            document.getElementById('qTextDisplay').innerText = q.text;
-
-            document.getElementById('answerOptionsGrid').classList.remove('hidden');
-            document.getElementById('playerSubmittedOverlay').classList.add('hidden');
-
-            for (let i = 0; i < 4; i++) {
-                const btn = document.getElementById(`btnOpt${i}`);
-                if (q.options[i]) {
-                    btn.classList.remove('hidden', 'opacity-50', '!bg-emerald-500', '!bg-rose-500', '!text-white', '!border-emerald-700', '!border-rose-700');
-                    btn.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-800', 'dark:text-white');
-                    btn.querySelector('.option-text').innerText = q.options[i];
-                    btn.disabled = false;
-                } else {
-                    btn.classList.add('hidden');
-                }
-            }
-
-            this.start10SecTimer();
-        }
-
-        start10SecTimer() {
-            if (this.questionTimer) clearInterval(this.questionTimer);
-            let timeLeft = 10;
-            document.getElementById('qTimerText').innerText = timeLeft;
-
-            this.questionTimer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('qTimerText').innerText = timeLeft;
-                sfx.playTick();
-
-                if (timeLeft <= 0) {
-                    clearInterval(this.questionTimer);
-                    if (!this.hasAnsweredCurrent) {
-                        this.handleTimeout();
-                    }
-                }
-            }, 1000);
-        }
-
-        submitAnswer(optionIndex) {
-            if (this.hasAnsweredCurrent) return;
-            this.hasAnsweredCurrent = true;
-            if (this.questionTimer) clearInterval(this.questionTimer);
-
-            const timeLeft = parseInt(document.getElementById('qTimerText').innerText) || 0;
-            const pack = this.roomData?.quizPack || this.selectedQuizPack;
-            const q = pack.questions[this.playerCurrentQuestionIndex];
-
-            const isCorrect = (optionIndex === q.correct);
-            const pointsEarned = isCorrect ? timeLeft : 0;
-
-            if (isCorrect) {
-                sfx.playCorrect();
-                this.playerScore += pointsEarned;
-                this.playerCorrectCount++;
-            } else {
-                sfx.playWrong();
-                this.playerWrongCount++;
-            }
-
-            for (let i = 0; i < 4; i++) {
-                const btn = document.getElementById(`btnOpt${i}`);
-                if (!btn) continue;
-                btn.disabled = true;
-                if (i === optionIndex) {
-                    if (isCorrect) {
-                        btn.classList.add('!bg-emerald-500', '!text-white', '!border-emerald-700');
-                    } else {
-                        btn.classList.add('!bg-rose-500', '!text-white', '!border-rose-700');
-                    }
-                } else if (!isCorrect && i === q.correct) {
-                    btn.classList.add('!bg-emerald-500', '!text-white', '!border-emerald-700');
-                }
-            }
-
-            document.getElementById('playerSubmittedOverlay').classList.add('hidden');
-
-            this.sendScoreToCloud();
-
-            setTimeout(() => {
-                this.playerCurrentQuestionIndex++;
-                this.renderCurrentStudentQuestion();
-            }, 1500);
-        }
-
-        handleTimeout() {
-            if (this.hasAnsweredCurrent) return;
-            this.hasAnsweredCurrent = true;
-            sfx.playWrong();
-            this.playerWrongCount++;
-
-            const pack = this.roomData?.quizPack || this.selectedQuizPack;
-            const q = pack.questions[this.playerCurrentQuestionIndex];
-
-            for (let i = 0; i < 4; i++) {
-                const btn = document.getElementById(`btnOpt${i}`);
-                if (btn) {
-                    btn.disabled = true;
-                    if (i === q.correct) {
-                        btn.classList.add('!bg-emerald-500', '!text-white', '!border-emerald-700');
-                    }
-                }
-            }
-
-            document.getElementById('playerSubmittedOverlay').classList.add('hidden');
-
-            this.sendScoreToCloud();
-
-            setTimeout(() => {
-                this.playerCurrentQuestionIndex++;
-                this.renderCurrentStudentQuestion();
-            }, 1500);
-        }
-
-        sendScoreToCloud() {
-            if (!this.roomData || !this.roomData.players) return;
-            const pack = this.roomData?.quizPack || this.selectedQuizPack;
-            const totalQ = pack.questions.length;
-            const answeredCount = Math.min(this.playerCurrentQuestionIndex + 1, totalQ);
-
-            if (!this.roomData.players[this.playerId]) {
-                this.roomData.players[this.playerId] = { id: this.playerId, name: this.playerName, avatar: this.playerAvatar };
-            }
-
-            this.roomData.players[this.playerId].score = this.playerScore;
-            this.roomData.players[this.playerId].correct = this.playerCorrectCount;
-            this.roomData.players[this.playerId].wrong = this.playerWrongCount;
-            this.roomData.players[this.playerId].questionIndex = answeredCount;
-
-            const allDone = Object.values(this.roomData.players).every(p => (p.questionIndex || 0) >= totalQ);
-            if (allDone && this.roomData.state === 'started') {
-                // All finished, but wait for teacher or auto finalize
-            }
-
-            this.syncRoomToCloud(false, [this.playerId]);
-        }
-
-        finishStudentQuiz() {
-            this.showView('viewGameOver');
-            document.getElementById('waitingFinalNotice').classList.remove('hidden');
-            document.getElementById('studentFinalLeaderboardContainer').classList.add('hidden');
-            document.getElementById('studentRankBanner').classList.add('hidden');
-            document.getElementById('gameOverSubText').innerText = "Fantastic job! You successfully completed all questions.";
-
-            sfx.playFanfare();
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-
-            this.sendScoreToCloud();
-        }
-
-        async endGameAsHost() {
-            if (!this.roomData) return;
-            this.roomData.state = 'ended';
-            await this.syncRoomToCloud();
-            this.renderFinalResultsForAll();
-        }
-
-        renderFinalResultsForAll() {
-            if (this.role === 'host') {
-                this.renderTeacherScoreboard();
-            } else {
-                this.showView('viewGameOver');
-                document.getElementById('waitingFinalNotice').classList.add('hidden');
-                document.getElementById('studentFinalLeaderboardContainer').classList.remove('hidden');
-
-                if (this.roomData && this.roomData.players) {
-                    const players = Object.values(this.roomData.players).sort((a, b) => b.score - a.score);
-                    const myRankIdx = players.findIndex(p => p.id === this.playerId);
-                    if (myRankIdx !== -1) {
-                        const rankNum = myRankIdx + 1;
-                        let ordinal = 'th';
-                        if (rankNum === 1) ordinal = 'st';
-                        else if (rankNum === 2) ordinal = 'nd';
-                        else if (rankNum === 3) ordinal = 'rd';
-
-                        const rankBanner = document.getElementById('studentRankBanner');
-                        const rankNumSpan = document.getElementById('studentRankNum');
-                        if (rankBanner && rankNumSpan) {
-                            rankNumSpan.innerText = rankNum + ordinal;
-                            rankBanner.classList.remove('hidden');
+                        if (lobbyView && !lobbyView.classList.contains('hidden')) {
+                            this.startStudentSelfPacedQuiz();
                         }
                     }
+                } else if (this.roomData.state === 'ended') {
+                    if (this.role === 'host') {
+                        this.renderTeacherScoreboard();
+                    } else {
+                        this.renderFinalResultsForAll();
+                    }
+                }
+            }
+
+            async startGame() {
+                this.roomData.state = 'started';
+                await this.syncRoomToCloud();
+
+                if (this.role === 'host') {
+                    this.renderTeacherScoreboard();
+                } else {
+                    this.startStudentSelfPacedQuiz();
+                }
+            }
+
+            renderTeacherScoreboard() {
+                this.showView('viewTeacherScoreboard');
+                
+                const titleTextEl = document.getElementById('scoreboardTitleText');
+                const podiumEl = document.getElementById('podiumContainer');
+                
+                if (this.roomData?.state === 'ended') {
+                    if (titleTextEl) {
+                        titleTextEl.innerHTML = `<span>Final Standings Table</span>`;
+                    }
+                    if (podiumEl) {
+                        podiumEl.classList.remove('hidden');
+                        this.renderPodiumStands('podiumStands');
+                    }
+                } else {
+                    if (titleTextEl) {
+                        titleTextEl.innerHTML = `<span>Live Standings Table</span>`;
+                    }
+                    if (podiumEl) {
+                        podiumEl.classList.add('hidden');
+                    }
                 }
 
-                this.renderPodiumStands('studentPodiumStands');
-
                 const players = Object.values(this.roomData?.players || {}).sort((a, b) => b.score - a.score);
-                const list = document.getElementById('studentFinalLeaderboardList');
+
+                const list = document.getElementById('teacherLeaderboardList');
                 list.innerHTML = players.map((p, idx) => {
                     const currentRank = idx + 1;
+                    const packTotal = this.roomData?.quizPack ? this.roomData.quizPack.questions.length : 10;
+                    const played = Math.min(p.questionIndex || 0, packTotal);
+                    const correct = p.correct || 0;
+                    const wrong = p.wrong || 0;
+                    const points = p.score || 0;
+
                     let posBadge = `<span class="font-black text-slate-700 dark:text-slate-300">${currentRank}</span>`;
                     if (currentRank === 1) posBadge = `<span class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center font-black text-xs mx-auto">1</span>`;
                     else if (currentRank === 2) posBadge = `<span class="w-6 h-6 rounded-full bg-slate-300 text-slate-900 flex items-center justify-center font-black text-xs mx-auto">2</span>`;
@@ -1620,51 +1376,388 @@
 
                     return `
                         <tr class="pl-row border-b border-slate-100 dark:border-slate-800">
-                            <td class="py-2 px-3 text-center font-black">${posBadge}</td>
-                            <td class="py-2 px-3">
-                                <div class="flex items-center gap-2">
-                                    ${this.renderAvatarDisplay(p.avatar, 'w-7 h-7 text-sm')}
-                                    <span class="font-black text-slate-800 dark:text-white text-xs truncate max-w-[120px]">${p.name} ${p.id === this.playerId ? '(You)' : ''}</span>
+                            <td class="py-2.5 px-3 text-center font-black">${posBadge}</td>
+                            <td class="py-2.5 px-3">
+                                <div class="flex items-center gap-2.5">
+                                    ${this.renderAvatarDisplay(p.avatar, 'w-8 h-8 text-lg')}
+                                    <span class="font-black text-slate-800 dark:text-white text-sm truncate max-w-[140px]">${p.name}</span>
                                 </div>
                             </td>
-                            <td class="py-2 px-3 text-center font-black text-sm text-slate-900 dark:text-white">${p.score || 0}</td>
+                            <td class="py-2.5 px-3 text-center font-bold text-slate-600 dark:text-slate-400">${played} / ${packTotal}</td>
+                            <td class="py-2.5 px-3 text-center font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/40 rounded-lg">${correct}</td>
+                            <td class="py-2.5 px-3 text-center font-black text-rose-500 dark:text-rose-400 bg-rose-50/50 dark:bg-rose-950/40 rounded-lg">${wrong}</td>
+                            <td class="py-2.5 px-3 text-right pr-4 font-black text-base text-slate-900 dark:text-white">${points}</td>
                         </tr>
                     `;
                 }).join('');
 
-                confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 } });
+                this.simulateBotProgress();
+            }
+
+            renderPodiumStands(containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+
+                const players = Object.values(this.roomData?.players || {}).sort((a, b) => b.score - a.score);
+                const first = players[0];
+                const second = players[1];
+                const third = players[2];
+
+                let html = '';
+
+                if (second) {
+                    html += `
+                        <div class="flex flex-col items-center flex-1 max-w-[100px]">
+                            <div class="mb-1 text-center">
+                                ${this.renderAvatarDisplay(second.avatar, 'w-12 h-12 text-xl')}
+                                <div class="text-xs font-black text-slate-800 dark:text-white truncate max-w-[90px] mt-1">${second.name}</div>
+                                <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400">${second.score || 0} pts</div>
+                            </div>
+                            <div class="w-full h-24 bg-slate-300 dark:bg-slate-700 border-3 border-slate-800 dark:border-slate-600 rounded-t-2xl flex items-center justify-center text-2xl font-black text-slate-700 dark:text-slate-200 shadow-md">
+                                🥈 2
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (first) {
+                    html += `
+                        <div class="flex flex-col items-center flex-1 max-w-[110px] -translate-y-4">
+                            <div class="mb-1 text-center">
+                                <div class="text-amber-500 text-lg mb-0.5 animate-bounce">👑</div>
+                                ${this.renderAvatarDisplay(first.avatar, 'w-14 h-14 text-2xl')}
+                                <div class="text-xs font-black text-slate-900 dark:text-white truncate max-w-[100px] mt-1">${first.name}</div>
+                                <div class="text-xs font-black text-amber-700 dark:text-amber-400">${first.score || 0} pts</div>
+                            </div>
+                            <div class="w-full h-32 bg-amber-400 border-3 border-slate-800 dark:border-slate-600 rounded-t-2xl flex items-center justify-center text-3xl font-black text-slate-900 shadow-lg">
+                                🥇 1
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (third) {
+                    html += `
+                        <div class="flex flex-col items-center flex-1 max-w-[100px]">
+                            <div class="mb-1 text-center">
+                                ${this.renderAvatarDisplay(third.avatar, 'w-12 h-12 text-xl')}
+                                <div class="text-xs font-black text-slate-800 dark:text-white truncate max-w-[90px] mt-1">${third.name}</div>
+                                <div class="text-[11px] font-bold text-slate-500 dark:text-slate-400">${third.score || 0} pts</div>
+                            </div>
+                            <div class="w-full h-20 bg-amber-600/80 border-3 border-slate-800 dark:border-slate-600 rounded-t-2xl flex items-center justify-center text-2xl font-black text-white shadow-md">
+                                🥉 3
+                            </div>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = html;
+            }
+
+            simulateBotProgress() {
+                if (this.role !== 'host' || !this.roomData?.players) return;
+                const nowTs = Date.now();
+                if (nowTs - this.lastBotTick < 2500) return;
+                this.lastBotTick = nowTs;
+                const packTotal = this.roomData.quizPack ? this.roomData.quizPack.questions.length : 10;
+                let changed = false;
+                Object.values(this.roomData.players).forEach(p => {
+                    if (p.id.startsWith('bot_') && (p.questionIndex || 0) < packTotal && Math.random() < 0.25) {
+                        const isCorrect = Math.random() > 0.3;
+                        if (isCorrect) {
+                            p.score = (p.score || 0) + Math.floor(Math.random() * 8) + 2;
+                            p.correct = (p.correct || 0) + 1;
+                        } else {
+                            p.wrong = (p.wrong || 0) + 1;
+                        }
+                        p.questionIndex = Math.min((p.questionIndex || 0) + 1, packTotal);
+                        changed = true;
+                    }
+                });
+                if (changed) {
+                    this.syncRoomToCloud(false, Object.keys(this.roomData.players).filter(id => id.startsWith('bot_')));
+                }
+            }
+
+            startStudentSelfPacedQuiz() {
+                this.playerCurrentQuestionIndex = 0;
+                this.playerScore = 0;
+                this.playerCorrectCount = 0;
+                this.playerWrongCount = 0;
+                this.showView('viewQuestion');
+                this.renderCurrentStudentQuestion();
+            }
+
+            renderCurrentStudentQuestion() {
+                const pack = this.roomData?.quizPack || this.selectedQuizPack;
+                if (this.playerCurrentQuestionIndex >= pack.questions.length) {
+                    this.finishStudentQuiz();
+                    return;
+                }
+
+                this.hasAnsweredCurrent = false;
+                const q = pack.questions[this.playerCurrentQuestionIndex];
+
+                document.getElementById('qProgressText').innerText = `Question ${this.playerCurrentQuestionIndex + 1} / ${pack.questions.length}`;
+                document.getElementById('qCategoryBadge').innerText = pack.title;
+                
+                const imgDisplay = document.getElementById('qImageDisplay');
+                const fallbackIcon = document.getElementById('qFallbackIcon');
+
+                if (q.emoji) {
+                    imgDisplay.style.display = 'none';
+                    fallbackIcon.style.display = 'flex';
+                    fallbackIcon.innerHTML = `<span style="font-size:8rem;line-height:1;">${q.emoji}</span>`;
+                } else if (q.imageUrl) {
+                    fallbackIcon.innerHTML = '<i class="fa-solid fa-image"></i>';
+                    imgDisplay.style.display = 'block';
+                    fallbackIcon.style.display = 'none';
+                    imgDisplay.src = q.imageUrl;
+                } else {
+                    fallbackIcon.innerHTML = '<i class="fa-solid fa-image"></i>';
+                    imgDisplay.style.display = 'none';
+                    fallbackIcon.style.display = 'flex';
+                }
+
+                document.getElementById('qTextDisplay').innerText = q.text;
+
+                document.getElementById('answerOptionsGrid').classList.remove('hidden');
+                document.getElementById('playerSubmittedOverlay').classList.add('hidden');
+
+                for (let i = 0; i < 4; i++) {
+                    const btn = document.getElementById(`btnOpt${i}`);
+                    if (q.options[i]) {
+                        btn.classList.remove('hidden', 'opacity-50', '!bg-emerald-500', '!bg-rose-500', '!text-white', '!border-emerald-700', '!border-rose-700');
+                        btn.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-800', 'dark:text-white');
+                        btn.querySelector('.option-text').innerText = q.options[i];
+                        btn.disabled = false;
+                    } else {
+                        btn.classList.add('hidden');
+                    }
+                }
+
+                this.start10SecTimer();
+            }
+
+            start10SecTimer() {
+                if (this.questionTimer) clearInterval(this.questionTimer);
+                let timeLeft = 10;
+                document.getElementById('qTimerText').innerText = timeLeft;
+
+                this.questionTimer = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('qTimerText').innerText = timeLeft;
+                    sfx.playTick();
+
+                    if (timeLeft <= 0) {
+                        clearInterval(this.questionTimer);
+                        if (!this.hasAnsweredCurrent) {
+                            this.handleTimeout();
+                        }
+                    }
+                }, 1000);
+            }
+
+            submitAnswer(optionIndex) {
+                if (this.hasAnsweredCurrent) return;
+                this.hasAnsweredCurrent = true;
+                if (this.questionTimer) clearInterval(this.questionTimer);
+
+                const timeLeft = parseInt(document.getElementById('qTimerText').innerText) || 0;
+                const pack = this.roomData?.quizPack || this.selectedQuizPack;
+                const q = pack.questions[this.playerCurrentQuestionIndex];
+
+                const isCorrect = (optionIndex === q.correct);
+                const pointsEarned = isCorrect ? timeLeft : 0;
+
+                if (isCorrect) {
+                    sfx.playCorrect();
+                    this.playerScore += pointsEarned;
+                    this.playerCorrectCount++;
+                } else {
+                    sfx.playWrong();
+                    this.playerWrongCount++;
+                }
+
+                for (let i = 0; i < 4; i++) {
+                    const btn = document.getElementById(`btnOpt${i}`);
+                    if (!btn) continue;
+                    btn.disabled = true;
+                    if (i === optionIndex) {
+                        if (isCorrect) {
+                            btn.classList.add('!bg-emerald-500', '!text-white', '!border-emerald-700');
+                        } else {
+                            btn.classList.add('!bg-rose-500', '!text-white', '!border-rose-700');
+                        }
+                    } else if (!isCorrect && i === q.correct) {
+                        btn.classList.add('!bg-emerald-500', '!text-white', '!border-emerald-700');
+                    }
+                }
+
+                document.getElementById('playerSubmittedOverlay').classList.add('hidden');
+
+                this.sendScoreToCloud();
+
+                setTimeout(() => {
+                    this.playerCurrentQuestionIndex++;
+                    this.renderCurrentStudentQuestion();
+                }, 1500);
+            }
+
+            handleTimeout() {
+                if (this.hasAnsweredCurrent) return;
+                this.hasAnsweredCurrent = true;
+                sfx.playWrong();
+                this.playerWrongCount++;
+
+                const pack = this.roomData?.quizPack || this.selectedQuizPack;
+                const q = pack.questions[this.playerCurrentQuestionIndex];
+
+                for (let i = 0; i < 4; i++) {
+                    const btn = document.getElementById(`btnOpt${i}`);
+                    if (btn) {
+                        btn.disabled = true;
+                        if (i === q.correct) {
+                            btn.classList.add('!bg-emerald-500', '!text-white', '!border-emerald-700');
+                        }
+                    }
+                }
+
+                document.getElementById('playerSubmittedOverlay').classList.add('hidden');
+
+                this.sendScoreToCloud();
+
+                setTimeout(() => {
+                    this.playerCurrentQuestionIndex++;
+                    this.renderCurrentStudentQuestion();
+                }, 1500);
+            }
+
+            sendScoreToCloud() {
+                if (!this.roomData || !this.roomData.players) return;
+                const pack = this.roomData?.quizPack || this.selectedQuizPack;
+                const totalQ = pack.questions.length;
+                const answeredCount = Math.min(this.playerCurrentQuestionIndex + 1, totalQ);
+
+                if (!this.roomData.players[this.playerId]) {
+                    this.roomData.players[this.playerId] = { id: this.playerId, name: this.playerName, avatar: this.playerAvatar };
+                }
+
+                this.roomData.players[this.playerId].score = this.playerScore;
+                this.roomData.players[this.playerId].correct = this.playerCorrectCount;
+                this.roomData.players[this.playerId].wrong = this.playerWrongCount;
+                this.roomData.players[this.playerId].questionIndex = answeredCount;
+
+                this.syncRoomToCloud(false, [this.playerId]);
+            }
+
+            finishStudentQuiz() {
+                this.showView('viewGameOver');
+                document.getElementById('waitingFinalNotice').classList.remove('hidden');
+                document.getElementById('studentFinalLeaderboardContainer').classList.add('hidden');
+                document.getElementById('studentRankBanner').classList.add('hidden');
+                document.getElementById('gameOverSubText').innerText = "Fantastic job! You successfully completed all questions.";
+
+                sfx.playFanfare();
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+                this.sendScoreToCloud();
+            }
+
+            async endGameAsHost() {
+                if (!this.roomData) return;
+                this.roomData.state = 'ended';
+                await this.syncRoomToCloud();
+                this.renderFinalResultsForAll();
+            }
+
+            renderFinalResultsForAll() {
+                if (this.role === 'host') {
+                    this.renderTeacherScoreboard();
+                } else {
+                    this.showView('viewGameOver');
+                    document.getElementById('waitingFinalNotice').classList.add('hidden');
+                    document.getElementById('studentFinalLeaderboardContainer').classList.remove('hidden');
+
+                    if (this.roomData && this.roomData.players) {
+                        const players = Object.values(this.roomData.players).sort((a, b) => b.score - a.score);
+                        const myRankIdx = players.findIndex(p => p.id === this.playerId);
+                        if (myRankIdx !== -1) {
+                            const rankNum = myRankIdx + 1;
+                            let ordinal = 'th';
+                            if (rankNum === 1) ordinal = 'st';
+                            else if (rankNum === 2) ordinal = 'nd';
+                            else if (rankNum === 3) ordinal = 'rd';
+
+                            const rankBanner = document.getElementById('studentRankBanner');
+                            const rankNumSpan = document.getElementById('studentRankNum');
+                            if (rankBanner && rankNumSpan) {
+                                rankNumSpan.innerText = rankNum + ordinal;
+                                rankBanner.classList.remove('hidden');
+                            }
+                        }
+                    }
+
+                    this.renderPodiumStands('studentPodiumStands');
+
+                    const players = Object.values(this.roomData?.players || {}).sort((a, b) => b.score - a.score);
+                    const list = document.getElementById('studentFinalLeaderboardList');
+                    list.innerHTML = players.map((p, idx) => {
+                        const currentRank = idx + 1;
+                        let posBadge = `<span class="font-black text-slate-700 dark:text-slate-300">${currentRank}</span>`;
+                        if (currentRank === 1) posBadge = `<span class="w-6 h-6 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center font-black text-xs mx-auto">1</span>`;
+                        else if (currentRank === 2) posBadge = `<span class="w-6 h-6 rounded-full bg-slate-300 text-slate-900 flex items-center justify-center font-black text-xs mx-auto">2</span>`;
+                        else if (currentRank === 3) posBadge = `<span class="w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center font-black text-xs mx-auto">3</span>`;
+
+                        return `
+                            <tr class="pl-row border-b border-slate-100 dark:border-slate-800">
+                                <td class="py-2 px-3 text-center font-black">${posBadge}</td>
+                                <td class="py-2 px-3">
+                                    <div class="flex items-center gap-2">
+                                        ${this.renderAvatarDisplay(p.avatar, 'w-7 h-7 text-sm')}
+                                        <span class="font-black text-slate-800 dark:text-white text-xs truncate max-w-[120px]">${p.name} ${p.id === this.playerId ? '(You)' : ''}</span>
+                                    </div>
+                                </td>
+                                <td class="py-2 px-3 text-center font-black text-sm text-slate-900 dark:text-white">${p.score || 0}</td>
+                            </tr>
+                        `;
+                    }).join('');
+
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.5 } });
+                }
+            }
+
+            resetToHome() {
+                this.leaveRoom();
+                this.showPlayerSetup();
+            }
+
+            toggleSound() {
+                sfx.muted = !sfx.muted;
+                const icon = document.getElementById('soundIcon');
+                if (sfx.muted) {
+                    icon.className = 'fa-solid fa-volume-xmark text-lg text-slate-400';
+                } else {
+                    icon.className = 'fa-solid fa-volume-high text-lg text-amber-600';
+                }
+            }
+
+            leaveRoom() {
+                if (this.questionTimer) clearInterval(this.questionTimer);
+                if (this.storageInterval) clearInterval(this.storageInterval);
+                if (this.unsubscribeFirestore) {
+                    this.unsubscribeFirestore();
+                    this.unsubscribeFirestore = null;
+                }
+                if (this.unsubscribePlayers) {
+                    this.unsubscribePlayers();
+                    this.unsubscribePlayers = null;
+                }
+                this.roomData = null;
             }
         }
 
-        resetToHome() {
-            this.leaveRoom();
-            this.showPlayerSetup();
-        }
-
-        toggleSound() {
-            sfx.muted = !sfx.muted;
-            const icon = document.getElementById('soundIcon');
-            if (sfx.muted) {
-                icon.className = 'fa-solid fa-volume-xmark text-lg text-slate-400';
-            } else {
-                icon.className = 'fa-solid fa-volume-high text-lg text-amber-600';
-            }
-        }
-
-        leaveRoom() {
-            if (this.questionTimer) clearInterval(this.questionTimer);
-            if (this.storageInterval) clearInterval(this.storageInterval);
-            if (this.unsubscribeFirestore) {
-                this.unsubscribeFirestore();
-                this.unsubscribeFirestore = null;
-            }
-            if (this.unsubscribePlayers) {
-                this.unsubscribePlayers();
-                this.unsubscribePlayers = null;
-            }
-            this.roomData = null;
-        }
-    }
-
-    window.app = new SafariApp();
-</script>
+        window.app = new SafariApp();
+    </script>
+</body>
+</html>
