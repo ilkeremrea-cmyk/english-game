@@ -1078,7 +1078,7 @@
                 this.listenToRoomCloud();
             }
 
-            async syncRoomToCloud(isNew = false) {
+            async syncRoomToCloud(isNew = false, playerIds = []) {
                 if (!this.roomId) return;
                 try {
                     if (db) {
@@ -1086,7 +1086,16 @@
                         if (isNew) {
                             await setDoc(roomRef, this.roomData);
                         } else {
-                            await updateDoc(roomRef, this.roomData);
+                            // Oyuncu listesini toptan ezmemek için: sadece oda alanlarını + belirtilen oyuncuları yaz
+                            const upd = {};
+                            Object.keys(this.roomData).forEach(k => {
+                                if (k !== 'players') upd[k] = this.roomData[k];
+                            });
+                            (playerIds || []).forEach(id => {
+                                const pl = this.roomData.players && this.roomData.players[id];
+                                if (pl) upd[`players.${id}`] = pl;
+                            });
+                            await updateDoc(roomRef, upd);
                         }
                     }
                 } catch(e) {
@@ -1117,6 +1126,7 @@
                 }
 
                 // Fallback polling / storage listener for local multi-device/tab sync
+                if (db) return;
                 this.storageInterval = setInterval(() => {
                     try {
                         const raw = localStorage.getItem(`word_adventure_room_${this.roomId}`);
@@ -1178,7 +1188,7 @@
                     questionIndex: 0
                 };
 
-                await this.syncRoomToCloud();
+                await this.syncRoomToCloud(false, [this.playerId]);
                 this.setupLobbyUI();
                 this.listenToRoomCloud();
             }
@@ -1287,7 +1297,7 @@
 
                 if (!this.roomData.players) this.roomData.players = {};
                 this.roomData.players[botId] = botData;
-                this.syncRoomToCloud();
+                this.syncRoomToCloud(false, [botId]);
                 this.updateLobbyPlayersGrid();
             }
 
@@ -1464,7 +1474,7 @@
                     }
                 });
                 if (changed) {
-                    this.syncRoomToCloud();
+                    this.syncRoomToCloud(false, Object.keys(this.roomData.players).filter(id => id.startsWith('bot_')));
                 }
             }
 
@@ -1636,7 +1646,7 @@
                     // All finished, but wait for teacher or auto finalize
                 }
 
-                this.syncRoomToCloud();
+                this.syncRoomToCloud(false, [this.playerId]);
             }
 
             finishStudentQuiz() {
