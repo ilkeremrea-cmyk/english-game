@@ -139,6 +139,15 @@
             <i class="fa-solid fa-cloud text-emerald-600 animate-pulse"></i>
             <span>Live Room</span>
         </div>
+        <div class="flex items-center gap-1">
+    <button onclick="app.changeZoom(-10)" id="zoomOutBtn" title="Zoom out" class="cartoon-btn w-10 h-10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center">
+        <i class="fa-solid fa-magnifying-glass-minus text-lg text-slate-700 dark:text-amber-300"></i>
+    </button>
+    <span id="zoomLabel" onclick="app.setZoom(100)" title="Reset zoom" class="hidden sm:inline text-xs font-black text-slate-700 dark:text-slate-200 min-w-[2.75rem] text-center cursor-pointer select-none">100%</span>
+    <button onclick="app.changeZoom(10)" id="zoomInBtn" title="Zoom in" class="cartoon-btn w-10 h-10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center">
+        <i class="fa-solid fa-magnifying-glass-plus text-lg text-slate-700 dark:text-amber-300"></i>
+    </button>
+</div>
         <button onclick="app.toggleTheme()" id="themeBtn" class="cartoon-btn w-10 h-10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center" title="Toggle Dark/Light Mode">
             <i id="themeIcon" class="fa-solid fa-moon text-lg text-slate-700 dark:text-amber-300"></i>
         </button>
@@ -751,7 +760,29 @@
             this.renderAvatarSelector();
             this.renderTeacherQuizPacks();
         }
+initZoom() {
+    let z = 100;
+    try { z = parseInt(localStorage.getItem('ewwZoom')) || 100; } catch(e) {}
+    this.setZoom(z);
+}
 
+changeZoom(delta) {
+    this.setZoom((this.zoomLevel || 100) + delta);
+}
+
+setZoom(level) {
+    level = Math.max(70, Math.min(200, Math.round(level / 10) * 10));
+    this.zoomLevel = level;
+    const mainEl = document.querySelector('main');
+    if (mainEl) mainEl.style.zoom = level / 100;
+    const label = document.getElementById('zoomLabel');
+    if (label) label.innerText = level + '%';
+    const outBtn = document.getElementById('zoomOutBtn');
+    const inBtn = document.getElementById('zoomInBtn');
+    if (outBtn) outBtn.disabled = level <= 70;
+    if (inBtn) inBtn.disabled = level >= 200;
+    try { localStorage.setItem('ewwZoom', level); } catch(e) {}
+}
         toggleTheme() {
             const htmlEl = document.documentElement;
             const isDark = htmlEl.classList.toggle('dark');
@@ -1748,6 +1779,7 @@
     }
 
     window.app = new SafariApp();
+    app.initZoom();
 </script>
     </body>
 </html>
