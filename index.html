@@ -314,10 +314,7 @@
 
             <div id="hostLobbyControls" class="hidden flex flex-col sm:flex-row justify-center gap-3">
                 <select id="lobbyPackSelect" onchange="app.changeLobbyPack(this.value)" class="p-3 border-3 border-slate-800 dark:border-slate-700 rounded-2xl font-bold text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-white cursor-pointer"></select>
-                <button onclick="app.addBotPlayer()" class="cartoon-btn bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-4 py-3 font-bold text-sm flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-robot text-sky-600"></i>
-                    <span>Add Bot Player (Test)</span>
-                </button>
+                
                 <button onclick="app.clearLobby()" class="cartoon-btn bg-rose-100 hover:bg-rose-200 dark:bg-rose-950 dark:hover:bg-rose-900 text-rose-800 dark:text-rose-200 px-4 py-3 font-bold text-sm flex items-center justify-center gap-2">
     <i class="fa-solid fa-broom"></i>
     <span>Clear Lobby</span>
@@ -546,6 +543,20 @@
 <div id="countdownOverlay" class="hidden fixed inset-0 bg-slate-900/85 flex flex-col items-center justify-center text-center" style="z-index:100;">
     <div class="text-white font-black text-2xl sm:text-3xl mb-4">Get ready!</div>
     <div id="countdownNumber" class="text-banana font-black" style="font-size:9rem; line-height:1;">5</div>
+</div>
+    <!-- Game Dialog -->
+<div id="gameDialog" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden" style="z-index:110;">
+    <div class="cartoon-card bg-white dark:bg-slate-900 p-6 w-full max-w-sm text-center">
+        <div id="gameDialogIcon" class="w-16 h-16 mx-auto bg-rose-100 text-rose-600 border-2 border-slate-800 dark:border-slate-700 rounded-2xl flex items-center justify-center text-3xl mb-3">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 id="gameDialogTitle" class="text-2xl font-black text-slate-800 dark:text-white mb-1">Are you sure?</h3>
+        <p id="gameDialogText" class="text-slate-500 dark:text-slate-400 text-sm font-bold mb-5"></p>
+        <div class="flex gap-2">
+            <button id="gameDialogCancel" type="button" onclick="app.closeDialog(false)" class="cartoon-btn w-1/3 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 py-3 font-bold text-sm">Cancel</button>
+            <button id="gameDialogOk" type="button" onclick="app.closeDialog(true)" class="cartoon-btn w-2/3 bg-rose-500 hover:bg-rose-600 text-white py-3 font-black text-base">Confirm</button>
+        </div>
+    </div>
 </div>
 <footer class="w-full text-center py-3 text-slate-500 dark:text-slate-400 font-bold text-xs border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60">
     English with Words &bull; Designed for 5th Grade English Learners <i class="fa-solid fa-castle text-pink-400 ml-1"></i>
@@ -1271,8 +1282,56 @@ setZoom(level) {
             `).join('');
         }
 
+                showDialog(opts = {}) {
+            const { title = 'Are you sure?', text = '', okLabel = 'OK', cancelLabel = 'Cancel', showCancel = true, tone = 'danger' } = opts;
+            return new Promise(resolve => {
+                const dlg = document.getElementById('gameDialog');
+                if (!dlg) {
+                    if (showCancel) { resolve(confirm(text || title)); } else { alert(text || title); resolve(true); }
+                    return;
+                }
+                if (this._dialogResolve) {
+                    const prev = this._dialogResolve;
+                    this._dialogResolve = null;
+                    prev(false);
+                }
+                document.getElementById('gameDialogTitle').innerText = title;
+                document.getElementById('gameDialogText').innerText = text;
+                const okBtn = document.getElementById('gameDialogOk');
+                const cancelBtn = document.getElementById('gameDialogCancel');
+                okBtn.innerText = okLabel;
+                cancelBtn.innerText = cancelLabel;
+                cancelBtn.classList.toggle('hidden', !showCancel);
+                okBtn.className = 'cartoon-btn ' + (showCancel ? 'w-2/3 ' : 'w-full ') +
+                    (tone === 'danger' ? 'bg-rose-500 hover:bg-rose-600 text-white' : 'bg-sky-500 hover:bg-sky-600 text-white') +
+                    ' py-3 font-black text-base';
+                const icon = document.getElementById('gameDialogIcon');
+                icon.className = 'w-16 h-16 mx-auto border-2 border-slate-800 dark:border-slate-700 rounded-2xl flex items-center justify-center text-3xl mb-3 ' +
+                    (tone === 'danger' ? 'bg-rose-100 text-rose-600' : 'bg-sky-100 text-sky-600');
+                icon.innerHTML = tone === 'danger' ? '<i class="fa-solid fa-triangle-exclamation"></i>' : '<i class="fa-solid fa-circle-info"></i>';
+                dlg.classList.remove('hidden');
+                this._dialogResolve = resolve;
+            });
+        }
+
+        closeDialog(result) {
+            const dlg = document.getElementById('gameDialog');
+            if (dlg) dlg.classList.add('hidden');
+            const r = this._dialogResolve;
+            this._dialogResolve = null;
+            if (r) r(result);
+        }
+
         async kickPlayer(id) {
             if (this.role !== 'host' || !this.roomData || !this.roomData.players) return;
+            const target = this.roomData.players[id];
+            if (!target) return;
+            const ok = await this.showDialog({
+                title: 'Remove player?',
+                text: `${target.name} will be removed from the lobby.`,
+                okLabel: 'Remove'
+            });
+            if (!ok || !this.roomData || !this.roomData.players) return;
             delete this.roomData.players[id];
             this.updateLobbyPlayersGrid();
             try {
@@ -1285,9 +1344,15 @@ setZoom(level) {
 
         async clearLobby() {
             if (this.role !== 'host' || !this.roomData || !this.roomData.players) return;
+            const count = Object.keys(this.roomData.players).length;
+            if (count === 0) return;
+            const ok = await this.showDialog({
+                title: 'Clear the lobby?',
+                text: `All ${count} player${count === 1 ? '' : 's'} will be removed from the lobby.`,
+                okLabel: 'Clear Lobby'
+            });
+            if (!ok || !this.roomData || !this.roomData.players) return;
             const ids = Object.keys(this.roomData.players);
-            if (ids.length === 0) return;
-            if (!confirm('Remove all players from the lobby?')) return;
             ids.forEach(id => delete this.roomData.players[id]);
             this.updateLobbyPlayersGrid();
             try {
@@ -1298,13 +1363,19 @@ setZoom(level) {
             } catch(e) {}
         }
 
-        handleKicked() {
+        async handleKicked() {
             this.hasSeenSelf = false;
             this.hideCountdown();
             if (this.questionTimer) clearInterval(this.questionTimer);
             this.leaveRoom();
             this.showPlayerSetup();
-            alert('You were removed from the room. You can join again if you like.');
+            await this.showDialog({
+                title: 'Removed from the room',
+                text: 'The teacher removed you from the room. You can join again if you like.',
+                okLabel: 'OK',
+                showCancel: false,
+                tone: 'info'
+            });
         }
 
         setupLobbyUI() {
@@ -1349,27 +1420,6 @@ setZoom(level) {
             } catch(e) {}
         }
 
-        addBotPlayer() {
-            const botNames = ["Alex 🐶", "Emma 🐱", "Leo 🐸", "Sophia 🐦", "Max 🐟"];
-            const randomName = botNames[Math.floor(Math.random() * botNames.length)] + " (Bot)";
-            const botId = 'bot_' + Math.random().toString(36).substring(2, 7);
-            const randomAvatar = AVATARS[Math.floor(Math.random() * AVATARS.length)];
-
-            const botData = {
-                id: botId,
-                name: randomName,
-                avatar: randomAvatar,
-                score: 0,
-                correct: 0,
-                wrong: 0,
-                questionIndex: 0
-            };
-
-            if (!this.roomData.players) this.roomData.players = {};
-            this.roomData.players[botId] = botData;
-            this.syncRoomToCloud(false, [botId]);
-            this.updateLobbyPlayersGrid();
-        }
 
                 handleRoomStateChange() {
             if (!this.roomData) return;
@@ -1570,7 +1620,6 @@ setZoom(level) {
                 `;
             }).join('');
 
-            this.simulateBotProgress();
         }
 
         renderPodiumStands(containerId) {
@@ -1633,31 +1682,7 @@ setZoom(level) {
             container.innerHTML = html;
         }
 
-        simulateBotProgress() {
-            if (this.role !== 'host' || !this.roomData?.players) return;
-            const nowTs = Date.now();
-            if (nowTs - this.lastBotTick < 2500) return;
-            this.lastBotTick = nowTs;
-            const packTotal = this.roomData.quizPack ? this.roomData.quizPack.questions.length : 10;
-            let changed = false;
-            Object.values(this.roomData.players).forEach(p => {
-                if (p.id.startsWith('bot_') && (p.questionIndex || 0) < packTotal && Math.random() < 0.25) {
-                    const isCorrect = Math.random() > 0.3;
-                    if (isCorrect) {
-                        p.score = (p.score || 0) + Math.floor(Math.random() * 8) + 2;
-                        p.correct = (p.correct || 0) + 1;
-                    } else {
-                        p.wrong = (p.wrong || 0) + 1;
-                    }
-                    p.questionIndex = Math.min((p.questionIndex || 0) + 1, packTotal);
-                    changed = true;
-                }
-            });
-            if (changed) {
-                this.syncRoomToCloud(false, Object.keys(this.roomData.players).filter(id => id.startsWith('bot_')));
-            }
-        }
-
+        
         startStudentSelfPacedQuiz() {
             this.playerCurrentQuestionIndex = 0;
             this.playerScore = 0;
