@@ -771,7 +771,7 @@ changeZoom(delta) {
 }
 
 setZoom(level) {
-    level = Math.max(70, Math.min(200, Math.round(level / 10) * 10));
+    level = Math.max(50, Math.min(200, Math.round(level / 10) * 10));
     this.zoomLevel = level;
     const mainEl = document.querySelector('main');
     if (mainEl) mainEl.style.zoom = level / 100;
@@ -779,7 +779,7 @@ setZoom(level) {
     if (label) label.innerText = level + '%';
     const outBtn = document.getElementById('zoomOutBtn');
     const inBtn = document.getElementById('zoomInBtn');
-    if (outBtn) outBtn.disabled = level <= 70;
+    if (outBtn) outBtn.disabled = level <= 50;
     if (inBtn) inBtn.disabled = level >= 200;
     try { localStorage.setItem('ewwZoom', level); } catch(e) {}
 }
