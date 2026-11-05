@@ -1,3 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English with Words</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'banana': '#FFE600',
+                        'banana-light': '#FFF9C4',
+                        'banana-dark': '#FBC02D',
+                        'mint': '#A7FFEB',
+                        'sky-light': '#E1F5FE',
+                        'sky-dark': '#01579B',
+                        'coral': '#FF6B6B'
+                    },
+                    borderWidth: {
+                        '3': '3px'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- QRCodeJS for generating scannable codes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAF8;
+            background-image: radial-gradient(#E2E8F0 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+        .dark body {
+            background-color: #0F172A;
+            background-image: radial-gradient(#334155 1.5px, transparent 1.5px);
+        }
+        .cartoon-card {
+            border: 3px solid #1E293B;
+            border-radius: 1.5rem;
+            box-shadow: 4px 4px 0px #1E293B;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .dark .cartoon-card {
+            border-color: #334155;
+            box-shadow: 4px 4px 0px #334155;
+        }
+        .cartoon-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 6px 6px 0px #1E293B;
+        }
+        .dark .cartoon-card:hover {
+            box-shadow: 6px 6px 0px #334155;
+        }
+        .cartoon-btn {
+            border: 3px solid #1E293B;
+            border-radius: 1rem;
+            box-shadow: 3px 3px 0px #1E293B;
+            transition: all 0.1s ease;
+            cursor: pointer !important;
+        }
+        .dark .cartoon-btn {
+            border-color: #334155;
+            box-shadow: 3px 3px 0px #334155;
+        }
+        .cartoon-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px #1E293B;
+        }
+        .dark .cartoon-btn:hover {
+            box-shadow: 6px 6px 0px #334155;
+        }
+        .cartoon-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #1E293B;
+        }
+        .cartoon-btn:disabled {
+            cursor: not-allowed !important;
+            transform: none;
+            box-shadow: 3px 3px 0px #1E293B;
+            opacity: 0.7;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F1F5F9;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 8px;
+        }
+        .pl-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .pl-row {
+            background: #FFFFFF;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .dark .pl-row {
+            background: #1E293B;
+            border-color: #334155;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800 dark:text-slate-100">
 <!-- Top Navigation Bar -->
 <header class="w-full bg-white dark:bg-slate-900 border-b-3 border-slate-800 dark:border-slate-700 px-4 py-3 flex items-center justify-between shadow-sm sticky top-0 z-40">
     <div class="flex items-center gap-3 cursor-pointer" onclick="app.handleBrandClick()">
