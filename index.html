@@ -318,6 +318,10 @@
                     <i class="fa-solid fa-robot text-sky-600"></i>
                     <span>Add Bot Player (Test)</span>
                 </button>
+                <button onclick="app.clearLobby()" class="cartoon-btn bg-rose-100 hover:bg-rose-200 dark:bg-rose-950 dark:hover:bg-rose-900 text-rose-800 dark:text-rose-200 px-4 py-3 font-bold text-sm flex items-center justify-center gap-2">
+    <i class="fa-solid fa-broom"></i>
+    <span>Clear Lobby</span>
+</button>
                 <button onclick="app.startGame()" class="cartoon-btn bg-mint text-slate-900 px-8 py-3 font-black text-xl hover:bg-emerald-400 flex items-center justify-center gap-2">
                     <span>Start Competition!</span>
                     <i class="fa-solid fa-play"></i>
@@ -1257,12 +1261,50 @@ setZoom(level) {
                 return;
             }
 
+            const isHost = this.role === 'host';
             grid.innerHTML = players.map(p => `
-                <div class="cartoon-card bg-white dark:bg-slate-900 p-3 flex flex-col items-center justify-center">
+                <div class="cartoon-card bg-white dark:bg-slate-900 p-3 ${isHost ? 'pt-6' : ''} flex flex-col items-center justify-center relative">
+                    ${isHost ? `<button onclick="app.kickPlayer('${p.id}')" title="Remove player" class="absolute top-1 right-1 w-6 h-6 rounded-lg bg-rose-500 hover:bg-rose-600 text-white border-2 border-slate-800 text-[11px] font-black flex items-center justify-center leading-none">✕</button>` : ''}
                     ${this.renderAvatarDisplay(p.avatar, 'w-10 h-10 text-xl')}
                     <span class="text-xs font-black text-slate-800 dark:text-white truncate w-full text-center mt-1">${p.name}</span>
                 </div>
             `).join('');
+        }
+
+        async kickPlayer(id) {
+            if (this.role !== 'host' || !this.roomData || !this.roomData.players) return;
+            delete this.roomData.players[id];
+            this.updateLobbyPlayersGrid();
+            try {
+                if (db) await deleteDoc(doc(db, 'rooms', this.roomId, 'players', id));
+            } catch(e) { console.error("Kick error:", e); }
+            try {
+                localStorage.setItem(`word_adventure_room_${this.roomId}`, JSON.stringify(this.roomData));
+            } catch(e) {}
+        }
+
+        async clearLobby() {
+            if (this.role !== 'host' || !this.roomData || !this.roomData.players) return;
+            const ids = Object.keys(this.roomData.players);
+            if (ids.length === 0) return;
+            if (!confirm('Remove all players from the lobby?')) return;
+            ids.forEach(id => delete this.roomData.players[id]);
+            this.updateLobbyPlayersGrid();
+            try {
+                if (db) await Promise.all(ids.map(id => deleteDoc(doc(db, 'rooms', this.roomId, 'players', id))));
+            } catch(e) { console.error("Clear lobby error:", e); }
+            try {
+                localStorage.setItem(`word_adventure_room_${this.roomId}`, JSON.stringify(this.roomData));
+            } catch(e) {}
+        }
+
+        handleKicked() {
+            this.hasSeenSelf = false;
+            this.hideCountdown();
+            if (this.questionTimer) clearInterval(this.questionTimer);
+            this.leaveRoom();
+            this.showPlayerSetup();
+            alert('You were removed from the room. You can join again if you like.');
         }
 
         setupLobbyUI() {
@@ -1331,7 +1373,15 @@ setZoom(level) {
 
                 handleRoomStateChange() {
             if (!this.roomData) return;
-
+            if (this.role !== 'host') {
+                const me = this.roomData.players && this.roomData.players[this.playerId];
+                if (me) {
+                    this.hasSeenSelf = true;
+                } else if (this.hasSeenSelf) {
+                    this.handleKicked();
+                    return;
+                }
+            }
             const lobbyView = document.getElementById('viewLobby');
             const inLobby = !!(lobbyView && !lobbyView.classList.contains('hidden'));
             if (inLobby) {
@@ -1618,7 +1668,7 @@ setZoom(level) {
         }
 
         renderCurrentStudentQuestion() {
-            if (this.roomData && this.roomData.state !== 'started') return;
+            if (!this.roomData || this.roomData.state !== 'started') return;
             const pack = this.roomData?.quizPack || this.selectedQuizPack;
             if (this.playerCurrentQuestionIndex >= pack.questions.length) {
                 this.finishStudentQuiz();
