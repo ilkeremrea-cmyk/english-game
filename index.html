@@ -1470,6 +1470,7 @@ setZoom(level) {
         async startGame() {
             if (!this.roomData || this.roomData.state !== 'lobby') return;
             this.roomData.state = 'countdown';
+                        this.resetLeaderboardTrends();
             await this.syncRoomToCloud();
             this.beginCountdown();
         }
@@ -1564,12 +1565,19 @@ setZoom(level) {
             this.roomData.quizPack = found;
             this.syncRoomToCloud();
         }
+                resetLeaderboardTrends() {
+            this.prevRanks = {};
+            this.prevScores = {};
+            this.rankTrend = {};
+            this.recentGain = {};
+        }
+
         renderTeacherScoreboard() {
             this.showView('viewTeacherScoreboard');
-            
+
             const titleTextEl = document.getElementById('scoreboardTitleText');
             const podiumEl = document.getElementById('podiumContainer');
-            
+
             if (this.roomData?.state === 'ended') {
                 if (titleTextEl) {
                     titleTextEl.innerHTML = `<span>Final Standings Table</span>`;
@@ -1587,9 +1595,45 @@ setZoom(level) {
                 }
             }
 
-            const players = Object.values(this.roomData?.players || {}).sort((a, b) => b.score - a.score);
+            if (!this.prevRanks) this.resetLeaderboardTrends();
+            const now = Date.now();
+
+            // Sıralama: puan, sonra doğru sayısı, sonra önceki sıra (kıpırdamayı önler), sonra isim
+            const players = Object.values(this.roomData?.players || {}).sort((a, b) => {
+                if ((b.score || 0) !== (a.score || 0)) return (b.score || 0) - (a.score || 0);
+                if ((b.correct || 0) !== (a.correct || 0)) return (b.correct || 0) - (a.correct || 0);
+                const pa = this.prevRanks[a.id] ?? 999;
+                const pb = this.prevRanks[b.id] ?? 999;
+                if (pa !== pb) return pa - pb;
+                return String(a.name).localeCompare(String(b.name));
+            });
+
+            // Sıra ve puan değişimlerini hesapla
+            const changedUp = {};
+            const changedDown = {};
+            players.forEach((p, idx) => {
+                const rank = idx + 1;
+                const prev = this.prevRanks[p.id];
+                if (prev !== undefined && prev !== rank) {
+                    this.rankTrend[p.id] = { dir: rank < prev ? 'up' : 'down', delta: Math.abs(prev - rank) };
+                    if (rank < prev) changedUp[p.id] = true; else changedDown[p.id] = true;
+                }
+                const prevScore = this.prevScores[p.id];
+                if (prevScore !== undefined && (p.score || 0) > prevScore) {
+                    this.recentGain[p.id] = { gain: (p.score || 0) - prevScore, at: now };
+                }
+                this.prevRanks[p.id] = rank;
+                this.prevScores[p.id] = p.score || 0;
+            });
 
             const list = document.getElementById('teacherLeaderboardList');
+
+            // Kayma animasyonu için eski satır konumlarını kaydet
+            const oldTops = {};
+            list.querySelectorAll('tr[data-pid]').forEach(tr => {
+                oldTops[tr.dataset.pid] = tr.getBoundingClientRect().top;
+            });
+
             list.innerHTML = players.map((p, idx) => {
                 const currentRank = idx + 1;
                 const packTotal = this.roomData?.quizPack ? this.roomData.quizPack.questions.length : 10;
@@ -1603,9 +1647,24 @@ setZoom(level) {
                 else if (currentRank === 2) posBadge = `<span class="w-6 h-6 rounded-full bg-slate-300 text-slate-900 flex items-center justify-center font-black text-xs mx-auto">2</span>`;
                 else if (currentRank === 3) posBadge = `<span class="w-6 h-6 rounded-full bg-amber-600 text-white flex items-center justify-center font-black text-xs mx-auto">3</span>`;
 
+                const t = this.rankTrend[p.id];
+                let trendHtml = `<span class="text-[10px] font-black text-slate-400">–</span>`;
+                if (t) {
+                    trendHtml = t.dir === 'up'
+                        ? `<span class="text-[10px] font-black text-emerald-600 dark:text-emerald-400">▲${t.delta}</span>`
+                        : `<span class="text-[10px] font-black text-rose-500 dark:text-rose-400">▼${t.delta}</span>`;
+                }
+
+                const g = this.recentGain[p.id];
+                const gainHtml = (g && now - g.at < 3000)
+                    ? `<span class="ml-1.5 inline-block text-xs font-black text-emerald-600 dark:text-emerald-400 animate-bounce">+${g.gain}</span>`
+                    : '';
+
                 return `
-                    <tr class="pl-row border-b border-slate-100 dark:border-slate-800">
-                        <td class="py-2.5 px-3 text-center font-black">${posBadge}</td>
+                    <tr class="pl-row border-b border-slate-100 dark:border-slate-800" data-pid="${p.id}">
+                        <td class="py-2.5 px-3 text-center font-black">
+                            <div class="flex flex-col items-center leading-tight gap-0.5">${posBadge}${trendHtml}</div>
+                        </td>
                         <td class="py-2.5 px-3">
                             <div class="flex items-center gap-2.5">
                                 ${this.renderAvatarDisplay(p.avatar, 'w-8 h-8 text-lg')}
@@ -1615,13 +1674,38 @@ setZoom(level) {
                         <td class="py-2.5 px-3 text-center font-bold text-slate-600 dark:text-slate-400">${played} / ${packTotal}</td>
                         <td class="py-2.5 px-3 text-center font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/40 rounded-lg">${correct}</td>
                         <td class="py-2.5 px-3 text-center font-black text-rose-500 dark:text-rose-400 bg-rose-50/50 dark:bg-rose-950/40 rounded-lg">${wrong}</td>
-                        <td class="py-2.5 px-3 text-right pr-4 font-black text-base text-slate-900 dark:text-white">${points}</td>
+                        <td class="py-2.5 px-3 text-right pr-4 font-black text-base text-slate-900 dark:text-white">${points}${gainHtml}</td>
                     </tr>
                 `;
             }).join('');
 
-        }
+            // Satırları eski yerinden yeni yerine kaydır, sıra değişenleri renkli yak
+            list.querySelectorAll('tr[data-pid]').forEach(tr => {
+                const pid = tr.dataset.pid;
+                const old = oldTops[pid];
+                const delta = old === undefined ? 0 : old - tr.getBoundingClientRect().top;
+                const flash = changedUp[pid] ? 'rgba(16,185,129,0.28)' : (changedDown[pid] ? 'rgba(244,63,94,0.22)' : '');
+                if (!delta && !flash) return;
+                tr.style.transition = 'none';
+                if (delta) tr.style.transform = `translateY(${delta}px)`;
+                if (flash) tr.style.backgroundColor = flash;
+                tr.getBoundingClientRect();
+                tr.style.transition = 'transform 0.7s ease, background-color 1.8s ease';
+                tr.style.transform = '';
+                tr.style.backgroundColor = '';
+            });
 
+            // "+puan" balonları 3 saniye sonra kaybolsun
+            const hasGain = Object.values(this.recentGain).some(g => now - g.at < 3000);
+            if (this.gainTimer) { clearTimeout(this.gainTimer); this.gainTimer = null; }
+            if (hasGain) {
+                this.gainTimer = setTimeout(() => {
+                    this.gainTimer = null;
+                    const v = document.getElementById('viewTeacherScoreboard');
+                    if (this.role === 'host' && v && !v.classList.contains('hidden')) this.renderTeacherScoreboard();
+                }, 3200);
+            }
+        }
         renderPodiumStands(containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
