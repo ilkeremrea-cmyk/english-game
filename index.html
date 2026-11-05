@@ -121,7 +121,7 @@
 </head>
 <body class="min-h-screen flex flex-col text-slate-800 dark:text-slate-100">
 <!-- Top Navigation Bar -->
-<header class="w-full bg-white dark:bg-slate-900 border-b-3 border-slate-800 dark:border-slate-700 px-4 py-3 flex items-center justify-between shadow-sm sticky top-0 z-40">
+<header class="w-full bg-white dark:bg-slate-900 border-b-3 border-slate-800 dark:border-slate-700 px-3 sm:px-4 py-3 flex flex-wrap gap-2 items-center justify-between shadow-sm sticky top-0 z-40">
     <div class="flex items-center gap-3 cursor-pointer" onclick="app.handleBrandClick()">
         <div class="w-10 h-10 rounded-2xl bg-banana border-3 border-slate-800 dark:border-slate-700 flex items-center justify-center text-xl shadow-sm">
             <i class="fa-solid fa-book-open text-slate-900"></i>
@@ -134,12 +134,12 @@
         </div>
     </div>
 
-    <div class="flex items-center gap-3">
+    <div class="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
         <div id="cloudStatusBadge" class="hidden bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 border-2 border-emerald-600 px-3 py-1 rounded-xl text-xs font-black flex items-center gap-1.5">
             <i class="fa-solid fa-cloud text-emerald-600 animate-pulse"></i>
-            <span>Live Room</span>
+            <span class="hidden sm:inline">Live Room</span>
         </div>
-        <div class="flex items-center gap-1">
+        <div class="hidden sm:flex items-center gap-1">
     <button onclick="app.changeZoom(-10)" id="zoomOutBtn" title="Zoom out" class="cartoon-btn w-10 h-10 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center">
         <i class="fa-solid fa-magnifying-glass-minus text-lg text-slate-700 dark:text-amber-300"></i>
     </button>
@@ -156,7 +156,7 @@
         </button>
         <button onclick="app.openTeacherAuthModal()" class="cartoon-btn bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 font-black text-xs md:text-sm flex items-center gap-2">
             <i class="fa-solid fa-chalkboard-user"></i>
-            <span>Teacher Panel</span>
+            <span class="hidden sm:inline">Teacher Panel</span>
         </button>
     </div>
 </header>
@@ -2111,6 +2111,7 @@ setZoom(level) {
         }
         @keyframes ewwPop { from { opacity: 0; scale: .3; } to { opacity: 1; scale: 1; } }
         @keyframes ewwFloat { 0%, 100% { translate: 0 0; rotate: 0deg; } 50% { translate: 0 -12px; rotate: 6deg; } }
+        @media (max-width: 640px) { #ewwDoodles { display: none; } }
         @media (prefers-reduced-motion: reduce) { .eww-doodle { animation: ewwPop .5s ease-out both; } }
     `;
     document.head.appendChild(style);
