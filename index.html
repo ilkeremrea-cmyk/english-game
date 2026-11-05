@@ -1565,7 +1565,34 @@ setZoom(level) {
             this.roomData.quizPack = found;
             this.syncRoomToCloud();
         }
-                resetLeaderboardTrends() {
+                checkAllFinished() {
+            if (this.role !== 'host' || !this.roomData || this.roomData.state !== 'started') return;
+            const players = Object.values(this.roomData.players || {});
+            if (players.length === 0) return;
+            const packTotal = this.roomData.quizPack ? this.roomData.quizPack.questions.length : 10;
+            const done = players.filter(p => (p.questionIndex || 0) >= packTotal).length;
+
+            // Başlığın yanına "3 / 5 finished" rozeti
+            const titleEl = document.getElementById('scoreboardTitleText');
+            if (titleEl) {
+                titleEl.insertAdjacentHTML('beforeend',
+                    `<span class="text-xs font-black bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-200 border-2 border-slate-800 dark:border-slate-700 px-2.5 py-1 rounded-full">${done} / ${players.length} finished</span>`);
+            }
+
+            // Herkes bitirince 2 saniye sonra yarışmayı otomatik bitir
+            if (done === players.length && !this.autoEndTimer) {
+                this.autoEndTimer = setTimeout(() => {
+                    this.autoEndTimer = null;
+                    if (!this.roomData || this.roomData.state !== 'started') return;
+                    const ps = Object.values(this.roomData.players || {});
+                    const total = this.roomData.quizPack ? this.roomData.quizPack.questions.length : 10;
+                    if (ps.length > 0 && ps.every(p => (p.questionIndex || 0) >= total)) {
+                        this.endGameAsHost();
+                    }
+                }, 2000);
+            }
+        }        
+        resetLeaderboardTrends() {
             this.prevRanks = {};
             this.prevScores = {};
             this.rankTrend = {};
@@ -1695,6 +1722,7 @@ setZoom(level) {
                 tr.style.backgroundColor = '';
             });
 
+                        this.checkAllFinished();
             // "+puan" balonları 3 saniye sonra kaybolsun
             const hasGain = Object.values(this.recentGain).some(g => now - g.at < 3000);
             if (this.gainTimer) { clearTimeout(this.gainTimer); this.gainTimer = null; }
