@@ -313,6 +313,7 @@
             </div>
 
             <div id="hostLobbyControls" class="hidden flex flex-col sm:flex-row justify-center gap-3">
+                <select id="lobbyPackSelect" onchange="app.changeLobbyPack(this.value)" class="p-3 border-3 border-slate-800 dark:border-slate-700 rounded-2xl font-bold text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-white cursor-pointer"></select>
                 <button onclick="app.addBotPlayer()" class="cartoon-btn bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-4 py-3 font-bold text-sm flex items-center justify-center gap-2">
                     <i class="fa-solid fa-robot text-sky-600"></i>
                     <span>Add Bot Player (Test)</span>
@@ -411,6 +412,10 @@
                     <i class="fa-solid fa-flag-checkered"></i>
                     <span>Finalize Competition</span>
                 </button>
+                <button id="restartGameBtn" onclick="app.restartToLobby()" class="hidden cartoon-btn bg-mint text-slate-900 px-5 py-2.5 font-black text-sm flex items-center gap-1.5 hover:bg-emerald-400">
+    <i class="fa-solid fa-rotate-right"></i>
+    <span>Play Again</span>
+</button>
             </div>
 
             <!-- Gartic.io Style Podium View (Hidden until Finalize is clicked) -->
@@ -533,7 +538,11 @@
         </form>
     </div>
 </div>
-
+<!-- Countdown Overlay -->
+<div id="countdownOverlay" class="hidden fixed inset-0 bg-slate-900/85 flex flex-col items-center justify-center text-center" style="z-index:100;">
+    <div class="text-white font-black text-2xl sm:text-3xl mb-4">Get ready!</div>
+    <div id="countdownNumber" class="text-banana font-black" style="font-size:9rem; line-height:1;">5</div>
+</div>
 <footer class="w-full text-center py-3 text-slate-500 dark:text-slate-400 font-bold text-xs border-t border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60">
     English with Words &bull; Designed for 5th Grade English Learners <i class="fa-solid fa-castle text-pink-400 ml-1"></i>
 </footer>
@@ -1320,42 +1329,141 @@ setZoom(level) {
             this.updateLobbyPlayersGrid();
         }
 
-        handleRoomStateChange() {
+                handleRoomStateChange() {
             if (!this.roomData) return;
-            
+
             const lobbyView = document.getElementById('viewLobby');
-            if (lobbyView && !lobbyView.classList.contains('hidden')) {
+            const inLobby = !!(lobbyView && !lobbyView.classList.contains('hidden'));
+            if (inLobby) {
                 this.updateLobbyPlayersGrid();
+                if (this.role === 'host') this.renderLobbyPackSelect();
             }
 
-            if (this.roomData.state === 'started') {
+            const state = this.roomData.state;
+
+            if (state === 'countdown') {
+                if (inLobby) this.beginCountdown();
+            } else if (state === 'started') {
+                this.hideCountdown();
                 if (this.role === 'host') {
                     this.renderTeacherScoreboard();
-                } else {
-                    if (lobbyView && !lobbyView.classList.contains('hidden')) {
-                        this.startStudentSelfPacedQuiz();
-                    }
+                    this.updateScoreboardButtons();
+                } else if (inLobby) {
+                    this.startStudentSelfPacedQuiz();
                 }
-            } else if (this.roomData.state === 'ended') {
+            } else if (state === 'ended') {
+                this.hideCountdown();
                 if (this.role === 'host') {
                     this.renderTeacherScoreboard();
+                    this.updateScoreboardButtons();
                 } else {
+                    if (this.questionTimer) clearInterval(this.questionTimer);
+                    this.hasAnsweredCurrent = true;
                     this.renderFinalResultsForAll();
                 }
+            } else if (state === 'lobby') {
+                this.hideCountdown();
+                if (this.role !== 'host' && !inLobby) this.returnStudentToLobby();
             }
         }
 
         async startGame() {
+            if (!this.roomData || this.roomData.state !== 'lobby') return;
+            this.roomData.state = 'countdown';
+            await this.syncRoomToCloud();
+            this.beginCountdown();
+        }
+
+        beginCountdown() {
+            if (this.countdownTimer || this.countdownDone) return;
+            const overlay = document.getElementById('countdownOverlay');
+            const numEl = document.getElementById('countdownNumber');
+            let n = 5;
+            if (numEl) numEl.innerText = n;
+            if (overlay) overlay.classList.remove('hidden');
+            sfx.playTick();
+
+            this.countdownTimer = setInterval(() => {
+                n--;
+                if (n > 0) {
+                    if (numEl) numEl.innerText = n;
+                    sfx.playTick();
+                } else {
+                    clearInterval(this.countdownTimer);
+                    this.countdownTimer = null;
+                    this.countdownDone = true;
+                    if (numEl) numEl.innerText = 'GO!';
+                    sfx.playCorrect();
+                    if (this.role === 'host') this.beginRound();
+                    setTimeout(() => { if (overlay) overlay.classList.add('hidden'); }, 3000);
+                }
+            }, 1000);
+        }
+
+        hideCountdown() {
+            if (this.countdownTimer) {
+                clearInterval(this.countdownTimer);
+                this.countdownTimer = null;
+            }
+            this.countdownDone = false;
+            const overlay = document.getElementById('countdownOverlay');
+            if (overlay) overlay.classList.add('hidden');
+        }
+
+        async beginRound() {
             this.roomData.state = 'started';
             await this.syncRoomToCloud();
+            this.renderTeacherScoreboard();
+            this.updateScoreboardButtons();
+        }
 
-            if (this.role === 'host') {
-                this.renderTeacherScoreboard();
-            } else {
-                this.startStudentSelfPacedQuiz();
+        async restartToLobby() {
+            if (!this.roomData || this.role !== 'host') return;
+            const ids = Object.keys(this.roomData.players || {});
+            ids.forEach(id => {
+                const p = this.roomData.players[id];
+                p.score = 0;
+                p.correct = 0;
+                p.wrong = 0;
+                p.questionIndex = 0;
+            });
+            this.roomData.state = 'lobby';
+            this.hideCountdown();
+            await this.syncRoomToCloud(false, ids);
+            this.setupLobbyUI();
+            this.renderLobbyPackSelect(true);
+        }
+
+        returnStudentToLobby() {
+            if (this.questionTimer) clearInterval(this.questionTimer);
+            this.hasAnsweredCurrent = true;
+            this.setupLobbyUI();
+        }
+
+        updateScoreboardButtons() {
+            const ended = this.roomData && this.roomData.state === 'ended';
+            const endBtn = document.getElementById('endGameBtn');
+            const restartBtn = document.getElementById('restartGameBtn');
+            if (endBtn) endBtn.classList.toggle('hidden', !!ended);
+            if (restartBtn) restartBtn.classList.toggle('hidden', !ended);
+        }
+
+        renderLobbyPackSelect(force = false) {
+            const sel = document.getElementById('lobbyPackSelect');
+            if (!sel) return;
+            if (force || sel.options.length === 0) {
+                sel.innerHTML = QUIZ_PACKS.map(p => `<option value="${p.id}">${p.title}</option>`).join('');
+                sel.value = (this.roomData && this.roomData.quizPack && this.roomData.quizPack.id) || this.selectedQuizPack.id;
             }
         }
 
+        changeLobbyPack(packId) {
+            const found = QUIZ_PACKS.find(p => p.id === packId);
+            if (!found || !this.roomData) return;
+            this.selectedQuizPack = found;
+            this.roomData.quizPack = found;
+            this.syncRoomToCloud();
+        }
         renderTeacherScoreboard() {
             this.showView('viewTeacherScoreboard');
             
@@ -1510,6 +1618,7 @@ setZoom(level) {
         }
 
         renderCurrentStudentQuestion() {
+            if (this.roomData && this.roomData.state !== 'started') return;
             const pack = this.roomData?.quizPack || this.selectedQuizPack;
             if (this.playerCurrentQuestionIndex >= pack.questions.length) {
                 this.finishStudentQuiz();
